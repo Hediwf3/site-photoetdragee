@@ -1,0 +1,48 @@
+--- GALLERY VARIABLES ---
+display: block;
+  overflow: hidden;
+  padding-bottom: 84px;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  --design-w: 430;
+
+--- BOX CLASSES ---
+.c-gallery-section__box.is-1 --y: 0; --x: 18; --w-phone: 155; --h-phone: 232;
+.c-gallery-section__box.is-1 --y: 0; --x: 37; --w-desktop: 285; --h-desktop: 427;
+.c-gallery-section__box.is-2 --y: 284; --x: 111; --w-phone: 292; --h-phone: 219;
+.c-gallery-section__box.is-2 --y: 360; --x: 738; --w-desktop: 583; --h-desktop: 437;
+.c-gallery-section__box.is-3 --y: 676; --x: 48; --w-phone: 151; --h-phone: 101;
+.c-gallery-section__box.is-3 --y: 845; --x: 179; --w-desktop: 271; --h-desktop: 181;
+.c-gallery-section__box.is-4 --y: 887; --x: 160; --w-phone: 161; --h-phone: 241;
+.c-gallery-section__box.is-4 --y: 1262; --x: 637; --w-desktop: 304; --h-desktop: 456;
+.c-gallery-section__box.is-5 --y: 1214; --x: 301; --w-phone: 129; --h-phone: 194;
+.c-gallery-section__box.is-5 --y: 1695; --x: 1272; --w-desktop: 240; --h-desktop: 359;
+.c-gallery-section__box.is-6 --y: 1463; --x: 0; --w-phone: 218; --h-phone: 327;
+.c-gallery-section__box.is-6 --y: 1958; --x: 0; --w-desktop: 515; --h-desktop: 772;
+.c-gallery-section__box.is-7 --y: 1778; --x: 249; --w-phone: 143; --h-phone: 95;
+.c-gallery-section__box.is-7 --y: 2503; --x: 756; --w-desktop: 229; --h-desktop: 153;
+.c-gallery-section__box.is-8 --y: 1943; --x: 187; --w-phone: 179; --h-phone: 269;
+.c-gallery-section__box.is-8 --y: 2916; --x: 919; --w-desktop: 388; --h-desktop: 583;
+.c-gallery-section__box.is-9 --y: 2262; --x: 34; --w-phone: 118; --h-phone: 178;
+.c-gallery-section__box.is-9 --y: 3229; --x: 218; --w-desktop: 317; --h-desktop: 476;
+.c-gallery-section__box.is-10 --y: 2517; --x: 200; --w-phone: 180; --h-phone: 270;
+.c-gallery-section__box.is-10 --y: 3783; --x: 698; --w-desktop: 483; --h-desktop: 725;
+.c-gallery-section__box.is-11 --y: 2961; --x: 153; --w-phone: 212; --h-phone: 141;
+.c-gallery-section__box.is-11 --y: 4726; --x: 902; --w-desktop: 423; --h-desktop: 282;
+.c-gallery-section__box.is-12 --y: 3151; --x: 0; --w-phone: 155; --h-phone: 233;
+.c-gallery-section__box.is-12 --y: 4753; --x: 249; --w-desktop: 363; --h-desktop: 544;
+.c-gallery-section__box.is-13 --y: 3399; --x: 303; --w-phone: 79; --h-phone: 119;
+.c-gallery-section__box.is-13 --y: 5423; --x: 1239; --w-desktop: 148; --h-desktop: 222;
+.c-gallery-section__box.is-14 --y: 3557; --x: 155; --w-phone: 207; --h-phone: 310;
+.c-gallery-section__box.is-14 --y: 5502; --x: 811; --w-desktop: 321; --h-desktop: 482;
+.c-gallery-section__box-text.is-1 --y: 540; --x: 143; --w: 228; text-align: center;
+.c-gallery-section__box-text.is-1 --y: 923; --x: 780; --w: 499;
+.c-gallery-section__box-text.is-2 --y: 1310; --x: 39; --w: 228;
+.c-gallery-section__box-text.is-2 --y: 1471; --x: 119; --w: 429;
+.c-gallery-section__box-text.is-3 --y: 2340; --x: 210; --w: 159; text-align: center;
+.c-gallery-section__box-text.is-3 --y: 2238; --x: 656; --w: 429;
+.c-gallery-section__box-text.is-4 --y: 2852; --x: 44; --w: 228; text-align: center;
+.c-gallery-section__box-text.is-4 --y: 4006; --x: 218; --w: 339; text-align: left;
+.c-gallery-section__box-text.is-5 --y: 3448; --x: 67; --w: 159;
+.c-gallery-section__box-text.is-5 --y: 5396; --x: 32; --w: 322;

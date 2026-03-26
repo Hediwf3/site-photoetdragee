@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.photoetdragee.fr/sitemap-index.xml

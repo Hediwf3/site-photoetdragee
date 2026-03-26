@@ -1,0 +1,170 @@
+---
+import { siteConfig } from '../data/siteConfig';
+
+const { navLinks } = siteConfig;
+---
+
+<header 
+  id="main-header"
+  class="fixed top-0 left-0 w-full z-[60] px-[5%] py-6 flex items-center justify-between transition-all duration-500 text-white md:opacity-0 md:-translate-y-full"
+>
+  {/* Logo / Brand Name */}
+  <div class="logo">
+    <a href="/" class="text-xl sm:text-2xl font-serif tracking-wide uppercase font-light hover:opacity-75 transition-opacity drop-shadow-md">
+      {siteConfig.title}
+    </a>
+  </div>
+
+  {/* Desktop Navigation */}
+  <nav class="hidden md:flex gap-8 items-center">
+    {navLinks.map((link) => (
+      <a 
+        href={link.href} 
+        class="text-sm uppercase tracking-widest font-sans font-light hover:italic transition-all duration-300"
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+
+  {/* Mobile Menu Button - Styled as a more robust tap target */}
+  <button id="mobile-menu-toggle" class="md:hidden relative z-[60] text-sm uppercase tracking-widest font-sans font-light py-2 px-4 group active:scale-95 transition-transform" aria-label="Menu">
+    <span class="js-menu-text">Menu</span>
+  </button>
+</header>
+
+{/* NEW: Mobile Menu Overlay - MOVED OUTSIDE HEADER TO AVOID BLENDING ISSUES */}
+<div id="mobile-menu-overlay" class="fixed inset-0 w-full h-full bg-surface z-[55] flex flex-col justify-center items-center opacity-0 pointer-events-none translate-y-full transition-all duration-700 ease-in-out">
+  <nav class="flex flex-col gap-12 items-center">
+    {navLinks.map((link) => (
+      <a 
+        href={link.href} 
+        class="mobile-nav-link text-4xl uppercase tracking-[0.2em] font-serif font-light opacity-0 translate-y-12 transition-all duration-700"
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<script>
+  // Simple scroll listener to reveal the header after scrolling past a threshold
+  const header = document.getElementById('main-header');
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+  const menuOverlay = document.getElementById('mobile-menu-overlay');
+  const menuText = document.querySelector('.js-menu-text');
+  const navLinksMobile = document.querySelectorAll('.mobile-nav-link');
+  
+  let isMenuOpen = false;
+
+  const updateHeaderState = () => {
+    if (!header) return;
+    const isMobile = window.innerWidth < 768;
+    
+    if (window.scrollY > 80 || isMobile) {
+      header.classList.remove('md:opacity-0', 'md:-translate-y-full', 'opacity-0', '-translate-y-full');
+      header.classList.add('opacity-100', 'translate-y-0');
+      
+      // Toggle exclusion only if menu is NOT open
+      if (!isMenuOpen) {
+        header.classList.add('mix-blend-exclusion');
+      } else {
+        header.classList.remove('mix-blend-exclusion');
+      }
+      
+      header.classList.remove('md:text-surface', 'text-surface');
+      header.classList.add('text-accent');
+    } else {
+      header.classList.add('md:opacity-0', 'md:-translate-y-full');
+      header.classList.remove('opacity-100', 'translate-y-0', 'mix-blend-exclusion');
+      header.classList.add('md:text-surface');
+      header.classList.remove('text-accent');
+    }
+  };
+
+  if (header) {
+    window.addEventListener('scroll', updateHeaderState);
+    updateHeaderState();
+  }
+
+  // Mobile Menu Logic
+  if (menuToggle && menuOverlay && menuText) {
+    menuToggle.addEventListener('click', () => {
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        // Open Menu
+        menuText.textContent = 'Fermer';
+        menuOverlay.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-full');
+        menuOverlay.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        
+        // Ensure header is visible and switch to a solid color (e.g., text-black/accent) for the white overlay
+        header?.classList.remove('mix-blend-exclusion');
+        header?.classList.remove('text-accent'); 
+        header?.classList.add('text-black'); // Explicit contrast for the menu overlay
+        
+        // Staggered links fade-in
+        navLinksMobile.forEach((link, i) => {
+          setTimeout(() => {
+             link.classList.remove('opacity-0', 'translate-y-12');
+             link.classList.add('opacity-100', 'translate-y-0');
+          }, 200 + (i * 100));
+        });
+
+        document.body.style.overflow = 'hidden';
+      } else {
+        // Close Menu
+        menuText.textContent = 'Menu';
+        menuOverlay.classList.add('opacity-0', 'pointer-events-none', 'translate-y-full');
+        menuOverlay.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        
+        header?.classList.remove('text-black');
+        
+        // Staggered links reset
+        navLinksMobile.forEach((link) => {
+           link.classList.add('opacity-0', 'translate-y-12');
+           link.classList.remove('opacity-100', 'translate-y-0');
+        });
+
+        // Restore header state
+        updateHeaderState();
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Close menu when a link is clicked (useful for anchors)
+    navLinksMobile.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = (link as HTMLAnchorElement).getAttribute('href');
+        
+        // Handle FAQ anchor explicitly for smooth transition
+        if (href === '/a-propos#faq' && (window as any).lenis) {
+          e.preventDefault();
+          isMenuOpen = false;
+          menuText.textContent = 'Menu';
+          menuOverlay.classList.add('opacity-0', 'pointer-events-none', 'translate-y-full');
+          menuOverlay.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+          updateHeaderState();
+          document.body.style.overflow = '';
+          
+          // Small delay to allow menu to start closing before navigating/scrolling
+          setTimeout(() => {
+            if (window.location.pathname === '/a-propos') {
+              (window as any).lenis.scrollTo('#faq', { offset: -160 });
+            } else {
+              window.location.href = href;
+            }
+          }, 100);
+          return;
+        }
+
+        isMenuOpen = false;
+        menuText.textContent = 'Menu';
+        menuOverlay.classList.add('opacity-0', 'pointer-events-none', 'translate-y-full');
+        menuOverlay.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        updateHeaderState();
+        document.body.style.overflow = '';
+      });
+    });
+  }
+</script>

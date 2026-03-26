@@ -1,0 +1,309 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../data/siteConfig';
+---
+
+<Layout title={`À Propos | ${siteConfig.title}`} hideHeader={true}>
+
+  {/* Fixed Floating Header (Project Page Style) */}
+  <header class="header-container z-[100] mix-blend-difference fixed top-0 left-0 w-full pointer-events-none">
+    <div class="header-inner-wrapper text-white pointer-events-auto flex justify-between items-center p-8">
+      
+      <div class="btn-hover-relative-block cursor-pointer flex-1 flex justify-start">
+        <a href="/" class="uppercase font-sans text-[10px] md:text-xs tracking-[0.2em] relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[1px] after:bg-white/60 hover:after:w-0 after:transition-all after:ease-out inline-block">
+            ACCUEIL
+        </a>
+      </div>
+      
+      <div class="header-svg-block flex-1 flex justify-center text-center">
+        <a href="/" class="logo-wrapper block leading-[0.9]">
+            <span class="font-serif text-[18px] md:text-[22px] tracking-wider block">PHOTO &</span>
+            <span class="font-serif text-[18px] md:text-[22px] tracking-wider block">DRAGÉE</span>
+        </a>
+      </div>
+      
+      <div class="right-block flex-1 flex justify-end">
+        <a href="https://instagram.com" target="_blank" class="link-item">
+            <p class="uppercase font-sans text-[10px] md:text-xs tracking-[0.2em] relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[1px] after:bg-white/60 hover:after:w-0 after:transition-all after:ease-out inline-block">
+                INSTAGRAM
+            </p>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  {/* ═══════════════════════════════════════════ */}
+  {/* SECTION 1 — HERO / INTRODUCTION            */}
+  {/* ═══════════════════════════════════════════ */}
+  <section class="hero-section w-full bg-surface text-accent pt-64 lg:pt-80 px-6 lg:px-8 overflow-hidden">
+    <div class="max-w-[2560px] mx-auto" style="container-type: inline-size;">
+      {/* Title line 1 — Strictly 2 lines via CSS CQI */}
+      <h1 class="font-bodoni font-normal leading-[1.1] mb-[clamp(40px,5.4vw,104px)] w-full block"
+          style="font-size: clamp(32px, 6cqi, 138px); font-optical-sizing: auto;">
+        <span class="block whitespace-nowrap">Capturer l'amour avec intention et</span>
+        <span class="block whitespace-nowrap">style</span>
+      </h1>
+
+      {/* Image + H2 + Intro text */}
+      <div class="flex flex-col lg:flex-row gap-0 items-stretch">
+        {/* Left: Portrait image (49% width) */}
+        <div class="w-full lg:w-[49%] flex-shrink-0 relative overflow-hidden min-w-0 aspect-[4/5] lg:aspect-auto" id="hero-img-container">
+          <img 
+            src="/portfolio-webp/grid_rect6.webp" 
+            alt="Hedi — Photo & Dragée" 
+            class="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+
+        {/* Right: H2 + Intro text + Hero CTA (50% width) */}
+        <div class="w-full lg:w-[50%] flex flex-col justify-between lg:pl-16 pt-11 lg:pt-0 min-w-0" style="container-type: inline-size;">
+          
+          {/* H2 title — FORCED 2-lines fit via CSS CQI, RIGHT aligned with 3% padding */}
+          <div class="w-full min-w-0">
+            <h2 class="font-bodoni font-normal leading-[1.1] text-right pr-[3%] mb-20 w-full block"
+                style="font-size: clamp(24px, 8.5cqi, 130px); font-optical-sizing: auto;">
+              <span class="block whitespace-nowrap">des moments intemporels,</span>
+              <span class="block whitespace-nowrap">des émotions vraies.</span>
+            </h2>
+
+            {/* Intro text */}
+            <div class="font-sans font-normal text-[clamp(18px,1.66vw,32px)] opacity-90 leading-[1.5] max-w-[850px] lg:mr-0 text-left">
+              <p class="mb-6">
+                Je suis Hedi, photographe de mariage basé à Vienne en Isère, voyant chaque célébration comme un mélange unique de mode, de sentiment et d'histoire. Depuis mes débuts en 2017, j'ai photographié de nombreux mariages avec un seul but : capturer non seulement l'esthétique de votre journée, mais surtout ce qu'elle vous fait ressentir.
+              </p>
+              <p>
+                Mon approche privilégie l'authenticité et la discrétion, tout en apportant un regard éditorial soigné. Je travaille à transformer vos souvenirs en un récit visuel intemporel, où chaque image raconte la profondeur de votre lien et l'élégance de votre union.
+              </p>
+            </div>
+          </div>
+
+          {/* New Hero CTA — Aligned with bottom of photo */}
+          <div class="hero-cta opacity-100 translate-y-0 pb-0">
+            <p class="font-sans font-light italic text-[clamp(18px,1.2vw,24px)] opacity-60 mb-6">
+              Parler nous de votre histoire et créons ensemble quelque chose de magique.
+            </p>
+            <a 
+              href="/contact" 
+              class="font-serif font-normal text-[clamp(40px,5vw,96px)] leading-[0.9] tracking-[-0.02em] block hover:opacity-70 transition-opacity duration-300"
+            >
+              Contactez-nous
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ═══════════════════════════════════════════ */}
+  {/* SECTION 2 — VISION & STYLE                 */}
+  {/* ═══════════════════════════════════════════ */}
+  <section class="w-full bg-surface text-accent pt-[120px] lg:pt-[200px] px-6 lg:px-8">
+    <div class="max-w-[2560px] mx-auto">
+      {/* Text + Image row (50 / 50) */}
+      <div class="flex flex-col lg:flex-row gap-12 lg:gap-0">
+        {/* Left: Description text */}
+        <div class="w-full lg:w-[50%] lg:pr-12 font-sans font-normal text-[clamp(18px,1.66vw,32px)] opacity-90 leading-[1.5]">
+          <h2 class="font-bodoni-sc uppercase font-normal text-[clamp(28px,2.5vw,56px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
+            Si nous travaillons ensemble, je raconterai votre histoire avec honnêteté, style et cœur.
+          </h2>
+          <p class="mb-8">
+            En dehors de la photographie, je trouve l'inspiration dans les rythmes du quotidien. La musique, les expositions et les galeries d'art nourrissent ma créativité. J'apprécie le bon vin, les conversations sincères et la découverte de nouvelles cultures. Ces expériences façonnent mon regard et ma manière de photographier — toujours avec intention et l'esprit ouvert.
+          </p>
+          <p class="mb-8">
+            Votre mariage est une tapisserie vivante où émotions brutes et élégance curatée s'entrelacent. Guidé par une sensibilité mode et un instinct photojournalistique, je capture les vibrations authentiques — les rires, les larmes et les vœux silencieux — avec chaleur et sincérité.
+          </p>
+          <p>
+            J'équilibre les portraits d'art et la spontanéité candide, tissant un récit qui dure bien au-delà du jour de votre mariage. Le résultat : des images intemporelles qui reflètent la splendeur que vous partagez et la profondeur de votre amour.
+          </p>
+        </div>
+
+        {/* Right: Second Image */}
+        <div class="w-full lg:w-[50%] lg:pl-12">
+          <div class="aspect-[3/2] w-full overflow-hidden">
+            <img 
+              src="/portfolio-webp/grid_rect14.webp?v=2" 
+              alt="Hedi en action — Photo & Dragée" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ═══════════════════════════════════════════ */}
+  {/* SECTION 3 — FAQ ACCORDION                  */}
+  {/* ═══════════════════════════════════════════ */}
+  <section id="faq" class="w-full bg-surface text-accent pt-[120px] lg:pt-[200px] px-6 lg:px-8" style="scroll-margin-top: 150px;">
+    <div class="max-w-[2560px] mx-auto">
+      {/* FAQ Title */}
+      <h2 class="font-bodoni font-normal text-[clamp(64px,6.66vw,128px)] leading-[1.2] mb-[80px] lg:mb-[120px]" style="font-optical-sizing: auto;">
+        Des questions ?
+      </h2>
+
+      {/* FAQ Items */}
+      <div class="faq-list w-full border-t border-accent/20">
+
+        {/* DIY FAQ Items Logic as before... */}
+        {/* FAQ 01 */}
+        <div class="faq-item border-b border-accent/20 cursor-pointer group" data-faq>
+          <div class="faq-question flex items-center py-6 lg:py-10 gap-6 lg:gap-10">
+            <span class="font-sans font-light text-[clamp(20px,1.66vw,32px)] opacity-60 flex-shrink-0 w-8 lg:w-16">01</span>
+            <span class="font-serif font-normal text-[clamp(32px,3.33vw,64px)] leading-[1.4] flex-1 group-hover:opacity-70 transition-opacity">Quel est votre style photographique ?</span>
+            <span class="faq-icon font-sans font-light text-[clamp(24px,1.66vw,32px)] opacity-60 flex-shrink-0 transition-transform duration-300 origin-center">+</span>
+          </div>
+          <div class="faq-answer overflow-hidden max-h-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] opacity-0">
+            <div class="pb-6 lg:pb-10 pl-14 lg:pl-[104px] pr-8 lg:pr-16 max-w-[80%]">
+              <p class="font-sans font-light text-[clamp(18px,1.66vw,32px)] opacity-80 leading-[1.5]">
+                Mon style mêle esthétique éditoriale et moments candides. Je capture des compositions cinématographiques raffinées tout en embrassant les émotions authentiques et non filtrées. Le résultat est une collection d'images qui paraissent à la fois élégantes et naturelles — intemporelles et vibrantes de vie.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ... (Other FAQ items kept exactly as before but with opacity-0 initially) */}
+        {/* Simplified for brevity while keeping the V2 improvements */}
+        {[
+          { q: "Combien de temps à l'avance faut-il réserver ?", a: "J'accepte un nombre limité de mariages chaque année afin d'offrir à chaque couple l'attention qu'il mérite. Pour la haute saison, je recommande de réserver 12 mois à l'avance." },
+          { q: "Vous déplacez-vous pour les mariages ?", a: "Mon terrain de jeu principal est la région Auvergne-Rhône-Alpes et partout en France." },
+          { q: "Comment se déroule la réservation ?", a: "Pour réserver votre date, un contrat signé et un acompte de 50% sont nécessaires." },
+          { q: "Proposez-vous des séances engagement ?", a: "Absolument ! Les séances engagement et pré-mariage sont un merveilleux moyen de se familiariser avec l'appareil photo." },
+          { q: "Serez-vous personnellement notre photographe ?", a: "Oui. Je photographie personnellement chaque mariage que je réserve." },
+          { q: "Peut-on se rencontrer avant le mariage ?", a: "Oui, je recommande un appel vidéo ou une rencontre en personne pour discuter de votre vision." },
+          { q: "Nos photos seront-elles publiées ?", a: "Je soumets régulièrement des mariages à des blogs et magazines spécialisés. Si vous préférez la confidentialité, un accord NDA est possible." }
+        ].map((item, index) => (
+          <div class="faq-item border-b border-accent/20 cursor-pointer group" data-faq>
+            <div class="faq-question flex items-center py-6 lg:py-10 gap-6 lg:gap-10">
+              <span class="font-sans font-light text-[clamp(20px,1.66vw,32px)] opacity-60 flex-shrink-0 w-8 lg:w-16">0{index + 2}</span>
+              <span class="font-serif font-normal text-[clamp(32px,3.33vw,64px)] leading-[1.4] flex-1 group-hover:opacity-70 transition-opacity">{item.q}</span>
+              <span class="faq-icon font-sans font-light text-[clamp(24px,1.66vw,32px)] opacity-60 flex-shrink-0 transition-transform duration-300 origin-center">+</span>
+            </div>
+            <div class="faq-answer overflow-hidden max-h-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] opacity-0">
+              <div class="pb-6 lg:pb-10 pl-14 lg:pl-[104px] pr-8 lg:pr-16 max-w-[80%]">
+                <p class="font-sans font-light text-[clamp(18px,1.66vw,32px)] opacity-80 leading-[1.5]">{item.a}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+
+      </div>
+    </div>
+  </section>
+
+  {/* ═══════════════════════════════════════════ */}
+  {/* SECTION 4 — FOOTER CTA                       */}
+  {/* ═══════════════════════════════════════════ */}
+  <section class="w-full bg-surface text-accent py-[160px] lg:py-[216px] px-6 lg:px-8 mt-[120px] lg:mt-[200px] flex justify-center items-center text-center border-t border-accent/10">
+    <div class="max-w-[2560px] mx-auto flex flex-col items-center">
+      <h2 class="font-bodoni font-normal text-[clamp(48px,7.18vw,138px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
+        Commençons la<br /> conversation
+      </h2>
+      <a 
+        href="/contact" 
+        class="font-sans font-light uppercase text-[clamp(18px,1.66vw,32px)] tracking-widest relative group inline-block hover:opacity-70 transition-opacity duration-300"
+      >
+        Formulaire de contact
+        <span class="absolute left-0 bottom-[-4px] w-full h-[1px] bg-accent transform origin-left transition-transform duration-300"></span>
+      </a>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  import gsap from 'gsap';
+
+  // 1. Hero CTA Animation (Slide Up)
+  document.addEventListener('astro:page-load', () => {
+    gsap.to('.hero-cta', {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: 'power3.out',
+      delay: 0.5
+    });
+  });
+
+  // 3. FAQ Accordion Logic (V2 Refined)
+  document.querySelectorAll('[data-faq]').forEach((item) => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer') as HTMLElement;
+    const icon = item.querySelector('.faq-icon');
+
+    if (!question || !answer || !icon) return;
+
+    question.addEventListener('click', () => {
+      const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+
+      // Close all others
+      document.querySelectorAll('[data-faq]').forEach((otherItem) => {
+        const otherAnswer = otherItem.querySelector('.faq-answer') as HTMLElement;
+        const otherIcon = otherItem.querySelector('.faq-icon');
+        if (otherAnswer && otherItem !== item) {
+          otherAnswer.style.maxHeight = '0px';
+          otherAnswer.style.opacity = '0';
+          if (otherIcon) {
+            otherIcon.textContent = '+';
+            (otherIcon as HTMLElement).style.transform = 'rotate(0deg)';
+          }
+        }
+      });
+
+      // Toggle current
+      if (isOpen) {
+        answer.style.maxHeight = '0px';
+        answer.style.opacity = '0';
+        icon.textContent = '+';
+        (icon as HTMLElement).style.transform = 'rotate(0deg)';
+      } else {
+        answer.style.maxHeight = answer.scrollHeight + 40 + 'px';
+        answer.style.opacity = '1';
+        icon.textContent = '−';
+        (icon as HTMLElement).style.transform = 'rotate(180deg)';
+      }
+    });
+
+    // Initialize all to closed state explicitly
+    answer.style.maxHeight = '0px';
+    answer.style.opacity = '0';
+  });
+
+  // 4. Handle External Anchor Scroll (FAQ)
+  document.addEventListener('astro:page-load', () => {
+    const scrollToFaq = (immediate = false) => {
+      if (window.location.hash === '#faq') {
+        const target = document.querySelector('#faq');
+        if (target && (window as any).lenis) {
+          // Increase delay to ensure images (even with aspect ratio) are settled and GSAP refreshed
+          setTimeout(() => {
+            (window as any).lenis.scrollTo(target, { 
+              offset: -120, 
+              duration: immediate ? 0 : 2,
+              easing: (t: number) => 1 - Math.pow(1 - t, 4)
+            });
+          }, immediate ? 100 : 800);
+        }
+      }
+    };
+
+    scrollToFaq();
+    window.addEventListener('hashchange', () => scrollToFaq(false));
+  });
+</script>
+
+<style>
+  .header-container {
+    padding-top: 10px;
+  }
+  
+  /* Fix for mix-blend-mode context */
+  :global(#smooth-wrapper) {
+    isolation: auto !important;
+  }
+</style>

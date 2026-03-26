@@ -1,0 +1,39 @@
+---
+import '../styles/global.css';
+import SmoothScroll from '../components/SmoothScroll.tsx';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  hideFooter?: boolean;
+  hideHeader?: boolean;
+  hideFooterLogo?: boolean;
+}
+
+const { title, description = "Editorial Wedding Photography", image, hideFooter = false, hideHeader = false, hideFooterLogo = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <SEO title={title} description={description} image={image} />
+  </head>
+  <body class="bg-surface text-accent font-sans selection:bg-brand-200 antialiased min-h-screen flex flex-col">
+    <!-- Smooth Scrolling Instance (React Component running client-side) -->
+    <SmoothScroll client:load />
+
+    <!-- Site Header Space -->
+    {!hideHeader && <Header />}
+    
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <!-- Site Footer Space -->
+    {!hideFooter && <Footer hideLogo={hideFooterLogo} />}
+  </body>
+</html>

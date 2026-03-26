@@ -1,0 +1,42 @@
+---
+// src/components/Gallery.astro
+import { Image } from 'astro:assets';
+
+interface Props {
+  images: ImageMetadata[];
+  columns?: string; // CSS class for columns, e.g., 'columns-1 md:columns-2 lg:columns-3'
+}
+
+const { 
+  images, 
+  columns = "columns-1 sm:columns-2 lg:columns-3 gap-4 md:gap-8" 
+} = Astro.props;
+---
+
+<div class={`w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12 ${columns} space-y-4 md:space-y-8`}>
+  {images.map((img, index) => (
+    <div class="break-inside-avoid animate-fade-up" style={`animation-delay: ${(index % 5) * 150}ms;`}>
+      {/* 
+        Using native lazy loading and image optimization.
+        No forced aspect ratio or object-cover to respect the strict rule 
+        of never cropping the photographer's work.
+      */}
+      <Image 
+        src={img} 
+        alt={`Gallery image ${index + 1}`} 
+        width={1000}
+        quality={85}
+        class="w-full h-auto object-contain cursor-pointer hover:opacity-90 transition-opacity duration-300"
+        loading={index < 4 ? "eager" : "lazy"}
+      />
+    </div>
+  ))}
+</div>
+
+<style>
+  /* Fix for Safari handling of CSS columns and avoid breaking */
+  .break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+</style>

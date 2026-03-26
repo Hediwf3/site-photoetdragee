@@ -1,0 +1,104 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { projects } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map(project => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<Layout title={`Trier - ${project.name}`}>
+  <main class="min-h-screen bg-gray-50 p-8 pt-24 font-sans text-gray-900">
+    <div class="max-w-6xl mx-auto">
+      <h1 class="text-3xl font-bold mb-2">Trier la galerie : {project.name}</h1>
+      <p class="text-gray-600 mb-8">Glissez et déposez les images pour modifier leur ordre. Le code en bas se mettra à jour automatiquement.</p>
+
+      {/* Sortable Grid (Dense layout for easier Drag & Drop) */}
+      <div id="sortable-gallery" class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-10 xl:grid-cols-12 gap-2 mb-12">
+        {project.gallery.map((img: string) => (
+          <div class="gallery-item relative group cursor-grab active:cursor-grabbing bg-gray-100 hover:bg-gray-200 transition-colors border border-gray-300 rounded overflow-hidden aspect-square flex items-center justify-center p-1" data-path={img}>
+            <img src={img} alt="Thumbnail" class="w-full h-full object-contain pointer-events-none" />
+            <div class="absolute inset-0 bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none border-2 border-blue-500 rounded">
+            </div>
+            {/* Delete Button */}
+            <button class="delete-btn absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:pointer-events-none z-10" aria-label="Supprimer cette image" title="Supprimer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Code Output */}
+      <div class="bg-gray-900 rounded-xl p-6 shadow-xl sticky bottom-4">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-white text-xl font-semibold">Code à remplacer dans 'gallery' :</h2>
+          <button id="copy-btn" class="bg-white text-gray-900 px-4 py-2 rounded font-medium hover:bg-gray-100 transition-colors">Copier le code</button>
+        </div>
+        <textarea id="output-code" class="w-full bg-gray-800 text-green-400 font-mono text-sm p-4 rounded h-64 outline-none resize-none" readonly></textarea>
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('sortable-gallery');
+    const outputArea = document.getElementById('output-code');
+    const copyBtn = document.getElementById('copy-btn');
+    
+    const sortable = new Sortable(el, {
+      animation: 150,
+      ghostClass: 'opacity-50',
+      onUpdate: function () {
+        updateCode();
+      }
+    });
+
+    function updateCode() {
+      const items = Array.from(el.children);
+      const paths = items.map(item => item.getAttribute('data-path'));
+      
+      let code = "        gallery: [\n";
+      paths.forEach((path, index) => {
+        code += `            "${path}"${index === paths.length - 1 ? '' : ','}\n`;
+      });
+      code += "        ],";
+      
+      outputArea.value = code;
+    }
+
+    updateCode();
+
+    // Copy event
+    copyBtn.addEventListener('click', () => {
+        outputArea.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Copié !';
+        setTimeout(() => {
+            copyBtn.textContent = 'Copier le code';
+        }, 2000);
+    });
+
+    // Delete events (event delegation on the parent container)
+    el.addEventListener('click', (e) => {
+      const target = e.target;
+      const deleteBtn = target.closest('.delete-btn');
+      
+      if (deleteBtn) {
+        const item = deleteBtn.closest('.gallery-item');
+        if (item) {
+          item.remove(); // Remove element from DOM
+          updateCode();  // Regenerate code without this element
+        }
+      }
+    });
+  });
+</script>

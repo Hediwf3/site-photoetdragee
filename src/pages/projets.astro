@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../data/siteConfig';
+
+// Import the centralized project data
+import { projects } from '../data/projects';
+
+---
+
+<Layout title={`Projets | ${siteConfig.title}`} hideFooter={true}>
+  <section class="h-[100dvh] w-full bg-surface relative overflow-hidden flex flex-col justify-between pt-24 pb-8">
+    
+    {/* Top Navigation Links */}
+    {/* Using an after pseudo-element for the animated underline that erases from left to right */}
+    <div class="absolute top-8 left-6 md:left-12 z-40">
+      <a 
+        href="/" 
+        class="font-sans font-light text-xs md:text-sm uppercase tracking-[0.2em] text-accent relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[1px] after:bg-accent/60 hover:after:left-full hover:after:w-0 after:transition-all after:duration-500 after:ease-out"
+      >
+        Accueil
+      </a>
+    </div>
+    <div class="absolute top-8 right-6 md:right-12 z-40">
+      <a 
+        href="/contact" 
+        class="font-sans font-light text-xs md:text-sm uppercase tracking-[0.2em] text-accent relative after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[1px] after:bg-accent/60 hover:after:left-full hover:after:w-0 after:transition-all after:duration-500 after:ease-out"
+      >
+        Contacter
+      </a>
+    </div>
+
+    {/* Page Header (Compressed) */}
+    <div class="px-6 md:px-12 text-center w-full animate-fade-up shrink-0">
+      <h1 class="text-3xl md:text-5xl font-serif font-light tracking-[-0.03em] mb-2 md:mb-4 text-accent">
+        Tous nos projets
+      </h1>
+      <p class="font-sans font-light text-xs opacity-80 uppercase tracking-widest leading-relaxed">
+        Une sélection de nos histoires d'amour les plus récentes
+      </p>
+    </div>
+
+    {/* Project List Center Grid (Compressed) */}
+    <div class="w-full max-w-[95%] mx-auto relative px-4 md:px-8 flex-grow flex items-center justify-center">
+      {/* 
+        2-column CSS Grid specifically designed for the scattered left/right effect.
+        The massive column gap explicitly reserves the center for the photo. 
+      */}
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-y-12 md:gap-y-20 md:gap-x-[calc(33.33%+40px)] lg:gap-x-[calc(33.33%+80px)] items-center w-full max-h-full">
+        {projects.map((project, index) => (
+          <li class="group relative cursor-default transition-colors w-full border-b border-accent/20 pb-4 md:pb-6 pt-2">
+            {/* The visible list item: Flex layout split into Name and Location */}
+            <a href={`/projets/${project.slug}`} class={`flex flex-col text-accent w-full group-hover:opacity-40 transition-opacity duration-500 gap-1 ${index % 2 !== 0 ? 'items-end text-right' : 'items-start text-left'}`}>
+              <span class="text-xl sm:text-2xl lg:text-[1.5vw] leading-[1.1] font-serif font-light text-balance z-10 relative">
+                {project.name}
+              </span>
+              <span class="font-sans text-[9px] xl:text-[10px] tracking-[0.2em] opacity-70 uppercase z-10 relative">
+                {project.location}
+              </span>
+            </a>
+
+            {/* The hidden center image (revealed on hover) */}
+            <img 
+              src={project.image} 
+              alt={`Projet de ${project.name}`} 
+              class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55vw] sm:w-[39vw] md:w-[24vw] max-h-[44vh] md:max-h-[50vh] object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[5]"
+              loading="lazy"
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Custom Logo Footer replacement (Corrected to Photo & Dragée) */}
+    <div class="w-full flex justify-center items-end px-6 shrink-0 mt-4">
+      <a href="/" title="Accueil" class="block w-full text-center">
+        <h2 
+          class="leading-[0.85] font-light flex justify-center items-baseline select-none m-0"
+          style="font-family: 'Times New Roman', Times, serif; color: #1c1c1c !important; opacity: 1 !important;"
+        >
+          <span style="font-size: 8vw;">PHOTO</span> 
+          <span class="italic px-[0.6vw]" style="font-size: 7vw;">&amp;</span> 
+          <span style="font-size: 8vw;">DRAGÉE</span>
+        </h2>
+      </a>
+    </div>
+
+  </section>
+</Layout>

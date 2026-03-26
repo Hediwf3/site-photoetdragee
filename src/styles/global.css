@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+@theme {
+    --color-brand-50: #EEEDE9;
+    --color-brand-100: #f7f5f2;
+    --color-brand-200: #ebe6df;
+    --color-brand-300: #dfd7cc;
+    --color-brand-400: #c5b8a5;
+    --color-brand-500: #ab997e;
+    --color-brand-600: #9b876a;
+    --color-brand-700: #816f56;
+    --color-brand-800: #6b5c49;
+    --color-brand-900: #584b3d;
+    --color-brand-950: #2e271f;
+
+    --color-accent: #1c1c1c;
+    --color-accent-muted: #4a4a4a;
+
+    --color-surface: #EEEDE9;
+    --color-surface-alt: #f7f5f2;
+
+    --font-sans: "Inter", "system-ui", sans-serif;
+    --font-serif: "Cormorant Garamond", "Playfair Display", serif;
+    --font-bodoni: "Bodoni Moda", serif;
+    --font-bodoni-sc: "Bodoni Moda SC", serif;
+
+    --text-display: 4.5rem;
+    --text-display--line-height: 1.1;
+    --text-display--letter-spacing: -0.02em;
+
+    --text-h1: 3.5rem;
+    --text-h1--line-height: 1.1;
+    --text-h1--letter-spacing: -0.01em;
+
+    --text-body: 1.125rem;
+    --text-body--line-height: 1.6;
+
+    --spacing-18: 4.5rem;
+    --spacing-22: 5.5rem;
+    --spacing-vh: 100vh;
+
+    --animate-fade-in: fadeIn 1.2s ease-out forwards;
+    --animate-fade-up: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    --animate-image-reveal: imageReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    --animate-soft-fade: fadeIn 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeUp {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes imageReveal {
+        0% {
+            clip-path: inset(100% 0 0 0);
+        }
+
+        100% {
+            clip-path: inset(0 0 0 0);
+        }
+    }
+}
+
+/* Custom Utilities layer replacement for Tailwind V4 */
+@utility text-balance {
+    text-wrap: balance;
+}
+
+@utility img-strict {
+    object-fit: contain;
+    width: 100%;
+    height: auto;
+}
+
+/* Base Styles */
+@layer base {
+    body {
+        background-color: var(--color-surface);
+        color: var(--color-accent);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+        background-color: var(--color-brand-200);
+        color: var(--color-brand-900);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-serif);
+        font-weight: 500;
+        letter-spacing: -0.01em;
+    }
+
+    /* Lenis smooth scrolling base rules */
+    html.lenis {
+        height: auto;
+    }
+
+    .lenis.lenis-smooth {
+        scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+        overflow: hidden;
+    }
+
+    .lenis.lenis-scrolling iframe {
+        pointer-events: none;
+    }
+}
+
