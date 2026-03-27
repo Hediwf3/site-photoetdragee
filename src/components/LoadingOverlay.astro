@@ -1,0 +1,186 @@
+---
+/**
+ * Premium Loading Overlay for Photo & Dragée
+ * 
+ * Shows a minimal, editorial loading screen that:
+ * 1. Preloads critical above-the-fold images
+ * 2. Shows a smooth 0-100% progress counter
+ * 3. Fades away with a curtain-reveal animation once assets are ready
+ * 4. Has a maximum timeout (6s) to never block the user indefinitely
+ */
+---
+
+<!-- Loading Overlay DOM -->
+<div id="loading-overlay" class="loading-overlay" aria-hidden="true">
+  <div class="loading-inner">
+    <div class="loading-brand font-serif">PHOTO <em>&amp;</em> DRAGÉE</div>
+    <div class="loading-progress">
+      <span id="loading-percent" class="loading-percent font-sans">0</span><span class="loading-percent-sign font-sans">%</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background-color: #EEEDE9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                visibility 0s linear 0s;
+    opacity: 1;
+    visibility: visible;
+    will-change: opacity;
+  }
+
+  .loading-overlay.done {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                visibility 0s linear 0.8s;
+    pointer-events: none;
+  }
+
+  .loading-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: loaderFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+
+  .loading-brand {
+    font-size: clamp(20px, 3vw, 36px);
+    letter-spacing: 0.15em;
+    color: #1c1c1c;
+    font-weight: 300;
+  }
+
+  .loading-brand em {
+    font-style: italic;
+    letter-spacing: 0;
+  }
+
+  .loading-progress {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    color: #1c1c1c;
+    opacity: 0.5;
+  }
+
+  .loading-percent {
+    font-size: clamp(12px, 1.5vw, 18px);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    min-width: 2.5ch;
+    text-align: right;
+  }
+
+  .loading-percent-sign {
+    font-size: clamp(10px, 1.2vw, 14px);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes loaderFadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  function initLoader() {
+    const overlay = document.getElementById('loading-overlay');
+    const percentEl = document.getElementById('loading-percent');
+    if (!overlay || !percentEl) return;
+
+    // If already dismissed (e.g. back navigation), skip
+    if (overlay.classList.contains('done')) return;
+
+    // IMPORTANT: declare before any early returns so closures work correctly
+    let currentDisplayed = 0;
+
+    function dismissOverlay(el: HTMLElement) {
+      if (el.classList.contains('done')) return;
+      el.classList.add('done');
+      setTimeout(() => el.remove(), 1000);
+    }
+
+    function animateProgress(target: number, onComplete?: () => void) {
+      const step = () => {
+        if (currentDisplayed < target) {
+          currentDisplayed = Math.min(currentDisplayed + 2, target);
+          if (percentEl) percentEl.textContent = String(currentDisplayed);
+          if (currentDisplayed < target) {
+            requestAnimationFrame(step);
+          } else if (onComplete) {
+            onComplete();
+          }
+        } else if (onComplete) {
+          onComplete();
+        }
+      };
+      requestAnimationFrame(step);
+    }
+
+    // Collect all images currently in the DOM
+    const allImages = Array.from(document.querySelectorAll('img[src]')) as HTMLImageElement[];
+    
+    // Filter to only eager/critical images
+    const criticalImages = allImages.filter(img => {
+      return img.loading === 'eager' || 
+             img.getAttribute('fetchpriority') === 'high' ||
+             !img.loading;
+    });
+
+    // If no critical images to track, dismiss quickly
+    if (criticalImages.length === 0) {
+      animateProgress(100, () => setTimeout(() => dismissOverlay(overlay), 100));
+      return;
+    }
+
+    let loadedCount = 0;
+    const totalCount = criticalImages.length;
+
+    function onImageLoad() {
+      loadedCount++;
+      const targetPercent = Math.round((loadedCount / totalCount) * 100);
+      animateProgress(targetPercent, () => {
+        if (loadedCount >= totalCount) {
+          setTimeout(() => dismissOverlay(overlay), 200);
+        }
+      });
+    }
+
+    // Track loading for each critical image
+    criticalImages.forEach(img => {
+      if (img.complete && img.naturalWidth > 0) {
+        onImageLoad();
+      } else {
+        img.addEventListener('load', onImageLoad, { once: true });
+        img.addEventListener('error', onImageLoad, { once: true });
+      }
+    });
+
+    // Safety timeout — never block user for more than 6 seconds
+    setTimeout(() => {
+      if (!overlay.classList.contains('done')) {
+        animateProgress(100, () => dismissOverlay(overlay));
+      }
+    }, 6000);
+  }
+
+  // Run immediately (before DOMContentLoaded for fastest start)
+  initLoader();
+  // Also run on Astro page transitions
+  document.addEventListener('astro:page-load', initLoader);
+</script>

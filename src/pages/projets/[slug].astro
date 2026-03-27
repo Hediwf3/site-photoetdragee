@@ -99,10 +99,24 @@ const secondName = nameParts.length > 1 ? nameParts[1] : '';
               {project.gallery.map((img, i) => (
                 <div class="image-wrapper gallery-item-wrapper for-desktop-anim for-mobile-anim shrink-0 relative z-10">
                   <div class="image-inner-wrapper js-project-anim w-auto h-full relative overflow-hidden flex items-center justify-center">
-                    <img src={img} class="opacity-0 w-auto h-full pointer-events-none block" alt="" aria-hidden="true" loading="eager" decoding="async" />
-                    <div class="sc-cacf51d0-0 kMtdZy image-cont absolute inset-0 w-full h-full">
-                      <img draggable="false" alt={`${project.name} photo ${i+1}`} loading="eager" decoding="async" src={img} class="absolute inset-0 w-full h-full object-cover" />
-                    </div>
+                    {i < 2 ? (
+                      <img 
+                        draggable="false" 
+                        alt={`${project.name} photo ${i+1}`} 
+                        loading="eager"
+                        decoding="sync"
+                        src={img} 
+                        class="w-auto h-full object-cover block gallery-img" 
+                      />
+                    ) : (
+                      <img 
+                        draggable="false" 
+                        alt={`${project.name} photo ${i+1}`} 
+                        data-src={img}
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+                        class="w-auto h-full object-cover block gallery-img gallery-lazy" 
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -488,6 +502,36 @@ const secondName = nameParts.length > 1 ? nameParts[1] : '';
           toggleActions: 'play none none reverse'
         }
       });
+    }
+
+    // === HORIZONTAL LAZY LOADING ===
+    // Native loading="lazy" only works vertically. For GSAP horizontal scroll,
+    // we use a custom observer that preloads images 2 viewports ahead.
+    const lazyImages = document.querySelectorAll('.gallery-lazy[data-src]');
+    if (lazyImages.length > 0) {
+      const isMobile = window.innerWidth < 768;
+      const lazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target as HTMLImageElement;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              delete img.dataset.src;
+              img.classList.remove('gallery-lazy');
+              lazyObserver.unobserve(img);
+              // Refresh GSAP after image loads to recalculate widths
+              img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+            }
+          }
+        });
+      }, {
+        // For horizontal scroll: extend rootMargin to the RIGHT by 200% of viewport
+        // For vertical (mobile): extend downward
+        rootMargin: isMobile ? '0px 0px 200% 0px' : '0px 300% 0px 0px',
+        threshold: 0
+      });
+      
+      lazyImages.forEach(img => lazyObserver.observe(img));
     }
 
     // Automatically refresh GSAP when images load and change the container's width

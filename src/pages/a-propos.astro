@@ -52,7 +52,7 @@ import { siteConfig } from '../data/siteConfig';
           <img 
             src="/portfolio-webp/grid_rect6.webp" 
             alt="Hedi — Photo & Dragée" 
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover reveal-up"
             loading="eager"
             decoding="async"
           />
@@ -107,16 +107,16 @@ import { siteConfig } from '../data/siteConfig';
       <div class="flex flex-col lg:flex-row gap-12 lg:gap-0">
         {/* Left: Description text */}
         <div class="w-full lg:w-[50%] lg:pr-12 font-sans font-normal text-[clamp(18px,1.66vw,32px)] opacity-90 leading-[1.5]">
-          <h2 class="font-bodoni-sc uppercase font-normal text-[clamp(28px,2.5vw,56px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
+          <h2 class="reveal-up font-bodoni-sc uppercase font-normal text-[clamp(28px,2.5vw,56px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
             Si nous travaillons ensemble, je raconterai votre histoire avec honnêteté, style et cœur.
           </h2>
-          <p class="mb-8">
+          <p class="mb-8 reveal-up reveal-up-delay-1">
             En dehors de la photographie, je trouve l'inspiration dans les rythmes du quotidien. La musique, les expositions et les galeries d'art nourrissent ma créativité. J'apprécie le bon vin, les conversations sincères et la découverte de nouvelles cultures. Ces expériences façonnent mon regard et ma manière de photographier — toujours avec intention et l'esprit ouvert.
           </p>
-          <p class="mb-8">
+          <p class="mb-8 reveal-up reveal-up-delay-2">
             Votre mariage est une tapisserie vivante où émotions brutes et élégance curatée s'entrelacent. Guidé par une sensibilité mode et un instinct photojournalistique, je capture les vibrations authentiques — les rires, les larmes et les vœux silencieux — avec chaleur et sincérité.
           </p>
-          <p>
+          <p class="reveal-up reveal-up-delay-3">
             J'équilibre les portraits d'art et la spontanéité candide, tissant un récit qui dure bien au-delà du jour de votre mariage. Le résultat : des images intemporelles qui reflètent la splendeur que vous partagez et la profondeur de votre amour.
           </p>
         </div>
@@ -127,7 +127,7 @@ import { siteConfig } from '../data/siteConfig';
             <img 
               src="/portfolio-webp/grid_rect14.webp?v=2" 
               alt="Hedi en action — Photo & Dragée" 
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover reveal-up"
               loading="lazy"
               decoding="async"
             />
@@ -143,7 +143,7 @@ import { siteConfig } from '../data/siteConfig';
   <section id="faq" class="w-full bg-surface text-accent pt-[120px] lg:pt-[200px] px-6 lg:px-8" style="scroll-margin-top: 150px;">
     <div class="max-w-[2560px] mx-auto">
       {/* FAQ Title */}
-      <h2 class="font-bodoni font-normal text-[clamp(64px,6.66vw,128px)] leading-[1.2] mb-[80px] lg:mb-[120px]" style="font-optical-sizing: auto;">
+      <h2 class="reveal-up font-bodoni font-normal text-[clamp(64px,6.66vw,128px)] leading-[1.2] mb-[80px] lg:mb-[120px]" style="font-optical-sizing: auto;">
         Des questions ?
       </h2>
 
@@ -201,7 +201,7 @@ import { siteConfig } from '../data/siteConfig';
   {/* ═══════════════════════════════════════════ */}
   <section class="w-full bg-surface text-accent py-[160px] lg:py-[216px] px-6 lg:px-8 mt-[120px] lg:mt-[200px] flex justify-center items-center text-center border-t border-accent/10">
     <div class="max-w-[2560px] mx-auto flex flex-col items-center">
-      <h2 class="font-bodoni font-normal text-[clamp(48px,7.18vw,138px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
+      <h2 class="reveal-up font-bodoni font-normal text-[clamp(48px,7.18vw,138px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
         Commençons la<br /> conversation
       </h2>
       <a 
@@ -228,6 +228,23 @@ import { siteConfig } from '../data/siteConfig';
       ease: 'power3.out',
       delay: 0.5
     });
+
+    // Avagyan-style reveal-up animations via IntersectionObserver
+    const revealElements = document.querySelectorAll('.reveal-up');
+    if (revealElements.length > 0) {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, {
+        rootMargin: '0px 0px -50px 0px',
+        threshold: 0.1
+      });
+      revealElements.forEach(el => revealObserver.observe(el));
+    }
   });
 
   // 3. FAQ Accordion Logic (V2 Refined)
