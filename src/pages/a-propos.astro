@@ -220,32 +220,30 @@ import { siteConfig } from '../data/siteConfig';
   import gsap from 'gsap';
 
   // 1. Hero CTA Animation (Slide Up)
-  document.addEventListener('astro:page-load', () => {
-    gsap.to('.hero-cta', {
-      opacity: 1,
-      y: 0,
-      duration: 1.5,
-      ease: 'power3.out',
-      delay: 0.5
-    });
-
-    // Avagyan-style reveal-up animations via IntersectionObserver
-    const revealElements = document.querySelectorAll('.reveal-up');
-    if (revealElements.length > 0) {
-      const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, {
-        rootMargin: '0px 0px -50px 0px',
-        threshold: 0.1
-      });
-      revealElements.forEach(el => revealObserver.observe(el));
-    }
+  gsap.to('.hero-cta', {
+    opacity: 1,
+    y: 0,
+    duration: 1.5,
+    ease: 'power3.out',
+    delay: 0.5
   });
+
+  // Avagyan-style reveal-up animations via IntersectionObserver
+  const revealElements = document.querySelectorAll('.reveal-up');
+  if (revealElements.length > 0) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -50px 0px',
+      threshold: 0.1
+    });
+    revealElements.forEach(el => revealObserver.observe(el));
+  }
 
   // 3. FAQ Accordion Logic (V2 Refined)
   document.querySelectorAll('[data-faq]').forEach((item) => {
@@ -292,26 +290,24 @@ import { siteConfig } from '../data/siteConfig';
   });
 
   // 4. Handle External Anchor Scroll (FAQ)
-  document.addEventListener('astro:page-load', () => {
-    const scrollToFaq = (immediate = false) => {
-      if (window.location.hash === '#faq') {
-        const target = document.querySelector('#faq');
-        if (target && (window as any).lenis) {
-          // Increase delay to ensure images (even with aspect ratio) are settled and GSAP refreshed
-          setTimeout(() => {
-            (window as any).lenis.scrollTo(target, { 
-              offset: -120, 
-              duration: immediate ? 0 : 2,
-              easing: (t: number) => 1 - Math.pow(1 - t, 4)
-            });
-          }, immediate ? 100 : 800);
-        }
+  const scrollToFaq = (immediate = false) => {
+    if (window.location.hash === '#faq') {
+      const target = document.querySelector('#faq');
+      if (target && (window as any).lenis) {
+        // Increase delay to ensure images (even with aspect ratio) are settled and GSAP refreshed
+        setTimeout(() => {
+          (window as any).lenis.scrollTo(target, { 
+            offset: -120, 
+            duration: immediate ? 0 : 2,
+            easing: (t: number) => 1 - Math.pow(1 - t, 4)
+          });
+        }, immediate ? 100 : 800);
       }
-    };
+    }
+  };
 
-    scrollToFaq();
-    window.addEventListener('hashchange', () => scrollToFaq(false));
-  });
+  scrollToFaq();
+  window.addEventListener('hashchange', () => scrollToFaq(false));
 </script>
 
 <style>
