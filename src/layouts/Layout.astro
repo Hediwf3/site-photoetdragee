@@ -13,9 +13,10 @@ interface Props {
   hideFooter?: boolean;
   hideHeader?: boolean;
   hideFooterLogo?: boolean;
+  hideLoadingOverlay?: boolean;
 }
 
-const { title, description = "Editorial Wedding Photography", image, hideFooter = false, hideHeader = false, hideFooterLogo = false } = Astro.props;
+const { title, description = "Editorial Wedding Photography", image, hideFooter = false, hideHeader = false, hideFooterLogo = false, hideLoadingOverlay = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,7 +26,7 @@ const { title, description = "Editorial Wedding Photography", image, hideFooter 
   </head>
   <body class="bg-surface text-accent font-sans selection:bg-brand-200 antialiased min-h-screen flex flex-col">
     <!-- Loading Overlay (shows progress while critical images load) -->
-    <LoadingOverlay />
+    {!hideLoadingOverlay && <LoadingOverlay />}
 
     <!-- Smooth Scrolling Instance (React Component running client-side) -->
     <SmoothScroll client:load />

@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { siteConfig } from '../data/siteConfig';
 ---
 
-<Layout title={`À Propos | ${siteConfig.title}`} hideHeader={true}>
+<Layout title={`À Propos | ${siteConfig.title}`} hideHeader={true} hideLoadingOverlay={true}>
 
   {/* Fixed Floating Header (Project Page Style) */}
   <header class="header-container z-[100] mix-blend-difference fixed top-0 left-0 w-full pointer-events-none">
