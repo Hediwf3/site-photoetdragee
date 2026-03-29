@@ -6,7 +6,7 @@ const { navLinks } = siteConfig;
 
 <header 
   id="main-header"
-  class="fixed top-0 left-0 w-full z-[60] px-[5%] py-6 flex items-center justify-between transition-all duration-500 text-white md:opacity-0 md:-translate-y-full"
+  class="fixed top-0 left-0 w-full z-[60] px-[5%] py-6 flex flex-row-reverse md:flex-row items-center justify-between transition-colors duration-500 text-white md:opacity-0 md:-translate-y-full"
 >
   {/* Logo / Brand Name */}
   <div class="logo">
@@ -60,8 +60,10 @@ const { navLinks } = siteConfig;
   const updateHeaderState = () => {
     if (!header) return;
     const isMobile = window.innerWidth < 768;
+    // Show header immediately on static un-scrollable pages
+    const isStaticPage = window.location.pathname.includes('/contact') || window.location.pathname.includes('/projets');
     
-    if (window.scrollY > 80 || isMobile) {
+    if (window.scrollY > 80 || isMobile || isStaticPage) {
       header.classList.remove('md:opacity-0', 'md:-translate-y-full', 'opacity-0', '-translate-y-full');
       header.classList.add('opacity-100', 'translate-y-0');
       
@@ -99,9 +101,8 @@ const { navLinks } = siteConfig;
         menuOverlay.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
         
         // Ensure header is visible and switch to a solid color (e.g., text-black/accent) for the white overlay
-        header?.classList.remove('mix-blend-exclusion');
-        header?.classList.remove('text-accent'); 
-        header?.classList.add('text-black'); // Explicit contrast for the menu overlay
+        header?.classList.remove('mix-blend-exclusion', 'text-white');
+        header?.classList.add('text-accent'); // Explicit contrast for the menu overlay
         
         // Staggered links fade-in
         navLinksMobile.forEach((link, i) => {
@@ -118,7 +119,8 @@ const { navLinks } = siteConfig;
         menuOverlay.classList.add('opacity-0', 'pointer-events-none', 'translate-y-full');
         menuOverlay.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
         
-        header?.classList.remove('text-black');
+        header?.classList.remove('text-accent', 'text-black');
+        header?.classList.add('text-white');
         
         // Staggered links reset
         navLinksMobile.forEach((link) => {

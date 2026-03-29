@@ -172,13 +172,13 @@ import { siteConfig } from '../data/siteConfig';
         {[
           { q: "Combien de temps à l'avance faut-il réserver ?", a: "J'accepte un nombre limité de mariages chaque année afin d'offrir à chaque couple l'attention qu'il mérite. Pour la haute saison, je recommande de réserver 12 mois à l'avance." },
           { q: "Vous déplacez-vous pour les mariages ?", a: "Mon terrain de jeu principal est la région Auvergne-Rhône-Alpes et partout en France." },
-          { q: "Comment se déroule la réservation ?", a: "Pour réserver votre date, un contrat signé et un acompte de 50% sont nécessaires." },
-          { q: "Proposez-vous des séances engagement ?", a: "Absolument ! Les séances engagement et pré-mariage sont un merveilleux moyen de se familiariser avec l'appareil photo." },
+          { q: "Comment se déroule la réservation ?", a: "Pour réserver votre date, un contrat signé et un acompte de 30% sont nécessaires." },
+          { q: "Quels sont vos tarifs ?", a: "Je propose une formule unique à 1600 € pour la journée entière. Un mariage n'est pas qu'une question d'horaire, et je ne conçois pas de vous accompagner à seulement 50 ou 80% de votre journée. Le tarif inclut le reportage intégral (des préparatifs à la soirée), la livraison des photos retouchées, le transport, ainsi qu'une clé USB et 50 tirages imprimés livrés dans un coffret premium." },
           { q: "Serez-vous personnellement notre photographe ?", a: "Oui. Je photographie personnellement chaque mariage que je réserve." },
-          { q: "Peut-on se rencontrer avant le mariage ?", a: "Oui, je recommande un appel vidéo ou une rencontre en personne pour discuter de votre vision." },
-          { q: "Nos photos seront-elles publiées ?", a: "Je soumets régulièrement des mariages à des blogs et magazines spécialisés. Si vous préférez la confidentialité, un accord NDA est possible." }
-        ].map((item, index) => (
-          <div class="faq-item border-b border-accent/20 cursor-pointer group" data-faq>
+          { q: "Proposez-vous des séances engagement ?", a: "Absolument ! Les séances engagement et pré-mariage sont un merveilleux moyen de se familiariser avec l'appareil photo." },
+          { q: "Nos photos seront-elles publiées ?", a: "Les images ne seront publiées que sur mon site ou sur mon Instagram, comme les mariages que vous avez pu y découvrir. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible." }
+        ].map((item, index, array) => (
+          <div class={`faq-item border-accent/20 cursor-pointer group ${index === array.length - 1 ? '' : 'border-b'}`} data-faq>
             <div class="faq-question flex items-center py-6 lg:py-10 gap-6 lg:gap-10">
               <span class="font-sans font-light text-[clamp(20px,1.66vw,32px)] opacity-60 flex-shrink-0 w-8 lg:w-16">0{index + 2}</span>
               <span class="font-serif font-normal text-[clamp(32px,3.33vw,64px)] leading-[1.4] flex-1 group-hover:opacity-70 transition-opacity">{item.q}</span>

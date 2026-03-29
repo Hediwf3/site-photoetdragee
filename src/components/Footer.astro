@@ -44,8 +44,50 @@ const currentYear = new Date().getFullYear();
           Instagram
         </a>
       </div>
+
+      <div class="flex flex-col gap-4">
+        <span class="opacity-50 text-xs">Contact</span>
+        <a href="#" class="bot-protected-email hover:italic transition-all duration-300" data-p1="photoetdragee" data-p2="gmail.com">Afficher l'email</a>
+        <a href="#" class="bot-protected-phone hover:italic transition-all duration-300" data-p1="06" data-p2="52253578">Afficher le numéro</a>
+      </div>
     </div>
 
   </div>
 
 </footer>
+
+<script>
+  // Bot protection
+  document.querySelectorAll('.bot-protected-email').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const p1 = el.getAttribute('data-p1');
+      const p2 = el.getAttribute('data-p2');
+      if (p1 && p2) {
+        const email = `${p1}@${p2}`;
+        const a = document.createElement('a');
+        a.href = `mailto:${email}`;
+        a.className = el.className;
+        a.textContent = email;
+        el.replaceWith(a);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.bot-protected-phone').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const pre = el.getAttribute('data-p1');
+      const suf = el.getAttribute('data-p2');
+      if (pre && suf) {
+        const phone = `${pre}${suf}`;
+        const formatted = `${pre} ${suf.match(/.{1,2}/g)?.join(' ')}`;
+        const a = document.createElement('a');
+        a.href = `tel:${phone}`;
+        a.className = el.className;
+        a.textContent = formatted;
+        el.replaceWith(a);
+      }
+    });
+  });
+</script>
