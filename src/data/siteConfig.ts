@@ -50,6 +50,6 @@ export const siteConfig = {
 
     // ---- Social Links ----
     socials: {
-        instagram: "https://www.instagram.com/",
+        instagram: "https://www.instagram.com/photoetdragee/",
     }
 };
