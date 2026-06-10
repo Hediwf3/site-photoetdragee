@@ -93,6 +93,31 @@ const mobileItems = [
 const mobileSizes = "(min-width: 768px) 1px, 47vw";
 // Hero rects are display:none on mobile but eager — keep their mobile fetch tiny
 const heroSizes = "(max-width: 767px) 1px, 14vw";
+
+// Client testimonials cycled in the on-grid review box (all 5★).
+// Charlotte stays first because that's the original spot.
+const reviews = [
+  {
+    quote: "Si nous avions pu mettre 6 étoiles nous l'aurions fait car il le mérite ! Milles merci à Hedi pour sa prestation lors de notre mariage. Un grand professionnalisme, très attentionné tout au long de la journée, d'une gentillesse qui a séduis les mariés et tous nos invités je vous le recommande car il est le photographe idéal pour un mariage ses photos sont sublimes et grâce à lui nous allons avoir de superbe souvenir à vie.",
+    quoteShort: "Le photographe idéal pour un mariage : ses photos sont sublimes et grâce à lui nous allons avoir de superbes souvenirs à vie.",
+    author: "Charlotte + Pierrick",
+  },
+  {
+    quote: "Le MEILLEUR des photographes et de loin ! Même 3 ans après, grâce à ses photos j'arrive à me replonger dans l'émotion de cette belle journée comme au jour J.",
+    quoteShort: "Le MEILLEUR des photographes et de loin ! Même 3 ans après, ses photos me replongent dans l'émotion du jour J.",
+    author: "Anna + Pierre",
+  },
+  {
+    quote: "Le meilleur des photographes !! On vous le recommande à 200 %. Il a su capturer les plus beaux moments. Hedi est quelqu'un d'incroyable et très professionnel. Tous nos proches l'ont adoré ! Alors merci beaucoup Hedi d'avoir immortalisé la plus belle journée de notre vie.",
+    quoteShort: "On le recommande à 200 %. Il a capturé les plus beaux moments. Hedi est quelqu'un d'incroyable et très professionnel.",
+    author: "Ben + Mel",
+  },
+  {
+    quote: "Il y a un an nous avons fait appel à Hedi pour notre mariage. C'est un photographe de talent qui a réalisé des photos sublimes, aucune de ratée ! Il a su nous mettre totalement à l'aise et nous conseiller pour prendre des poses naturelles, tout en exploitant au maximum l'environnement atypique dans lequel nous étions (un château). Nous ne pouvons que le recommander, tant pour son professionnalisme que pour sa gentillesse !",
+    quoteShort: "Un photographe de talent, des photos sublimes, aucune de ratée. Il a su nous mettre à l'aise pour des poses naturelles.",
+    author: "Anaïs + Sam",
+  },
+];
 ---
 
 <Layout title={title} description={description} hideFooterLogo={true}>
@@ -208,13 +233,28 @@ const heroSizes = "(max-width: 767px) 1px, 14vw";
         Mon rôle ? Saisir ces instants précieux qui filent en une fraction de seconde. Des portraits de couple intimistes aux éclats de rire pris sur le vif, je retranscris chaque détail de votre histoire.
       </p>
     </div>
-    {/* Text Box 4 */}
-    <div class="absolute left-[10.23vw] top-[663.26vw] w-[53.02vw] md:left-[14.42vw] md:top-[264.95vw] md:w-[22.42vw] text-center md:text-left text-accent leading-relaxed flex flex-col justify-center gap-2">
-      <div class="flex justify-center md:justify-start text-accent text-opacity-80 md:text-[0.8vw]">
-        ★★★★★
+    {/* Text Box 4 — Reviews Carousel */}
+    <div class="js-reviews absolute left-[10.23vw] top-[663.26vw] w-[53.02vw] md:left-[14.42vw] md:top-[264.95vw] md:w-[22.42vw] text-center md:text-left text-accent leading-relaxed flex flex-col justify-center">
+      <div class="js-reviews-track grid">
+        {reviews.map((review, i) => (
+          <figure class={`js-review-slide col-start-1 row-start-1 m-0 flex flex-col items-start gap-2 ${i === 0 ? 'is-active' : ''}`} data-index={i}>
+            <div class="js-review-meta flex justify-center md:justify-start text-accent text-opacity-80 md:text-[0.8vw]">
+              ★★★★★
+            </div>
+            <blockquote class="js-review-quote font-serif font-light italic text-balance mb-2 text-[3.2vw] md:text-[1vw] leading-relaxed">
+              "{review.quote}"
+            </blockquote>
+            <figcaption class="js-review-meta font-sans text-[2.2vw] md:text-[0.6vw] uppercase tracking-widest opacity-60">
+              — {review.author}
+            </figcaption>
+          </figure>
+        ))}
       </div>
-      <p class="font-serif font-light italic text-balance mb-2 text-[3.2vw] md:text-[1vw] leading-relaxed">"Si nous avions pu mettre 6 étoiles nous l'aurions fait car il le mérite ! Milles merci à Hedi pour sa prestation lors de notre mariage. Un grand professionnalisme, très attentionné tout au long de la journée, d'une gentillesse qui a séduis les mariés et tous nos invités je vous le recommande car il est le photographe idéal pour un mariage ses photos sont sublimes et grâce à lui nous allons avoir de superbe souvenir à vie."</p>
-      <p class="font-sans text-[2.2vw] md:text-[0.6vw] uppercase tracking-widest opacity-60">— Charlotte + Pierrick</p>
+      <div class="js-reviews-dots flex justify-center md:justify-start items-center gap-[6px] mt-5 md:mt-4">
+        {reviews.map((_, i) => (
+          <button type="button" class={`review-dot ${i === 0 ? 'is-active' : ''}`} data-dot={i} aria-label={`Avis ${i + 1}`}></button>
+        ))}
+      </div>
     </div>
     {/* Text Box 5 */}
     <div class="absolute left-[15.58vw] top-[801.86vw] w-[50vw] md:left-[16.47vw] md:top-[363.89vw] md:w-[28vw] text-accent leading-relaxed flex flex-col items-center text-center justify-center">
@@ -280,9 +320,26 @@ const heroSizes = "(max-width: 767px) 1px, 14vw";
           Une formule unique qui couvre l’intégralité de votre journée de mariage, des préparatifs à la soirée.
         </p>
         <div class="font-serif text-[12vw] font-light leading-none my-5 opacity-90 tracking-widest">— 1600 € —</div>
-        <div class="text-accent text-opacity-80 text-sm mb-2">★★★★★</div>
-        <p class="font-serif font-light italic text-balance text-base leading-relaxed mb-2">"Le photographe idéal pour un mariage : ses photos sont sublimes et grâce à lui nous allons avoir de superbes souvenirs à vie."</p>
-        <p class="font-sans text-[9px] uppercase tracking-widest opacity-60">— Charlotte + Pierrick</p>
+        <div class="js-reviews mt-4">
+          <div class="js-reviews-track grid">
+            {reviews.map((review, i) => (
+              <figure class={`js-review-slide col-start-1 row-start-1 m-0 flex flex-col items-center gap-2 ${i === 0 ? 'is-active' : ''}`} data-index={i}>
+                <div class="js-review-meta text-accent text-opacity-80 text-sm mb-2">★★★★★</div>
+                <blockquote class="js-review-quote font-serif font-light italic text-balance text-base leading-relaxed mb-2">
+                  "{review.quoteShort}"
+                </blockquote>
+                <figcaption class="js-review-meta font-sans text-[9px] uppercase tracking-widest opacity-60">
+                  — {review.author}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <div class="js-reviews-dots flex justify-center items-center gap-[6px] mt-4">
+            {reviews.map((_, i) => (
+              <button type="button" class={`review-dot ${i === 0 ? 'is-active' : ''}`} data-dot={i} aria-label={`Avis ${i + 1}`}></button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {mobileItems.slice(32).map((item) => (
@@ -307,6 +364,46 @@ const heroSizes = "(max-width: 767px) 1px, 14vw";
   .mobile-grid-item.revealed, .mobile-text-block.revealed {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* === Sliding reviews carousel === */
+  /* All slides share one grid cell; the tallest sets the height, the active one shows. */
+  .js-review-slide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .js-review-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  /* Clip mask so the staggered words slide up from behind their own line.
+     JS overrides these with the same values once SplitType has run. */
+  .js-review-quote .line {
+    overflow: hidden;
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
+  }
+  .review-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0.25;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .review-dot.is-active {
+    opacity: 0.85;
+    transform: scale(1.4);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js-review-slide { transition: none; }
   }
 </style>
 
@@ -553,5 +650,81 @@ const heroSizes = "(max-width: 767px) 1px, 14vw";
       // Pre-fire once to ensure large enough feed if the screen is super tall
       onScroll();
   }
+
+  // === Sliding Reviews Carousel — c-heading-style line-by-line wave reveal ===
+  // The page has two carousels (desktop on-grid box + mobile inline). Same logic for each.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('.js-reviews').forEach((section) => {
+    const slides = Array.from(section.querySelectorAll<HTMLElement>('.js-review-slide'));
+    const dots = Array.from(section.querySelectorAll<HTMLElement>('.review-dot'));
+    if (slides.length === 0) return;
+
+    const INTERVAL = 8500;
+    let current = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    let split: SplitType | null = null;
+
+    const showReview = (index: number) => {
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+
+      const slide = slides[index];
+      const quote = slide.querySelector<HTMLElement>('.js-review-quote');
+      if (reduceMotion || !quote) return;
+
+      if (split) split.revert();
+      split = new SplitType(quote, { types: 'lines,words' });
+
+      // Same clip-mask trick the hero c-heading uses, applied per line
+      split.lines?.forEach((line) => {
+        const el = line as HTMLElement;
+        el.style.overflow = 'hidden';
+        el.style.paddingBottom = '0.2em';
+        el.style.marginBottom = '-0.2em';
+      });
+
+      gsap.killTweensOf(slide.querySelectorAll('.word, .js-review-meta'));
+
+      const tl = gsap.timeline();
+      split.lines?.forEach((line, i) => {
+        const words = (line as HTMLElement).querySelectorAll('.word');
+        tl.from(words, {
+          y: '100%',
+          opacity: 0,
+          duration: 1.6,
+          ease: 'power3.out',
+          stagger: 0.035,
+        }, 0.05 + i * 0.13);
+      });
+      tl.from(slide.querySelectorAll('.js-review-meta'), {
+        y: 14,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.18,
+      }, 0.35);
+    };
+
+    const next = () => { current = (current + 1) % slides.length; showReview(current); };
+    const startAuto = () => { if (!timer) timer = setInterval(next, INTERVAL); };
+    const stopAuto = () => { if (timer) { clearInterval(timer); timer = null; } };
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        current = i;
+        showReview(current);
+        stopAuto();
+        startAuto();
+      });
+    });
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) { showReview(current); startAuto(); }
+        else { stopAuto(); }
+      });
+    }, { threshold: 0.2 });
+    sectionObserver.observe(section);
+  });
 
 </script>
