@@ -2,7 +2,7 @@
 
 export const siteConfig = {
     title: "Photo et dragée",
-    description: "Photographie de mariage éditoriale. Capturer l'honnêteté de vos instants précieux.",
+    description: "Photo & Dragée — Hedi, photographe de mariage à Vienne (Isère) & Lyon. Reportages de mariage éditoriaux et authentiques en Auvergne-Rhône-Alpes.",
 
     // Navigation
     navLinks: [

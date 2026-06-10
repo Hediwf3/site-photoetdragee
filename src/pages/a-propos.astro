@@ -1,9 +1,35 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { siteConfig } from '../data/siteConfig';
+import { imgAttrs } from '../utils/images';
+
+const description = "Je suis Hedi, photographe de mariage basé à Vienne (Isère, 38200). Reportages sincères et élégants à Vienne, Lyon et en Auvergne-Rhône-Alpes. FAQ : tarifs, réservation, déplacements.";
+
+const faqItems = [
+  { q: "Quel est votre style photographique ?", a: "Mon style entremêle esthétique intemporelle et moments d'authenticité captés sur le vif. Je fais rimer convivialité avec professionnalisme pour accompagner les jeunes mariés avec bonne humeur et les mettre dans les meilleures conditions pour être à l'aise face à l'objectif." },
+  { q: "Combien de temps à l'avance faut-il réserver ?", a: "J'accepte un nombre limité de mariages chaque année afin d'offrir à chaque couple l'attention qu'il mérite. Pour la haute saison, je recommande de réserver 12 mois à l'avance." },
+  { q: "Vous déplacez-vous pour les mariages ?", a: "Photographe de mariage à Vienne, mon terrain de jeu principal est l'Isère et la région lyonnaise. Je suis également amené à me déplacer dans toute la région Auvergne-Rhône-Alpes." },
+  { q: "Comment se déroule la réservation ?", a: "Après un premier contact par mail ou téléphone, je vous propose de nous rencontrer pour discuter plus avant de vos envies et de vos besoins le jour de votre mariage. Lorsque vous souhaitez réserver votre date de façon définitive, je vous invite à me retourner un contrat signé ainsi qu'à verser un acompte de 30%." },
+  { q: "Quels sont vos tarifs ?", a: "Je propose une formule unique à 1 600 € pour la journée entière. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l'envoi d'une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage." },
+  { q: "Serez-vous personnellement notre photographe ?", a: "Oui. Je photographie personnellement chaque mariage que je réserve." },
+  { q: "Proposez-vous des séances engagement ?", a: "Oui, j'inclus dans chacun de mes forfaits un shooting photo en couple gratuit en amont de votre union, à la date de votre choix. Cette séance d'engagement nous permet d'apprendre à nous connaître pour que vous soyez en confiance le jour J." },
+  { q: "Nos photos seront-elles publiées ?", a: "Les images ne seront publiées que sur mon site ou sur mon Instagram. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible." }
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.q,
+    "acceptedAnswer": { "@type": "Answer", "text": item.a }
+  }))
+};
 ---
 
-<Layout title={`À Propos | ${siteConfig.title}`} hideHeader={true} hideLoadingOverlay={true}>
+<Layout title={`À Propos — Hedi, photographe de mariage à Vienne | ${siteConfig.title}`} description={description} hideHeader={true} hideLoadingOverlay={true}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   {/* Fixed Floating Header (Project Page Style) */}
   <header class="header-container z-[100] mix-blend-difference fixed top-0 left-0 w-full pointer-events-none">
@@ -49,11 +75,12 @@ import { siteConfig } from '../data/siteConfig';
       <div class="flex flex-col lg:flex-row gap-0 items-stretch">
         {/* Left: Portrait image (49% width) */}
         <div class="w-full lg:w-[49%] flex-shrink-0 relative overflow-hidden min-w-0 aspect-[4/5] lg:aspect-auto" id="hero-img-container">
-          <img 
-            src="/portfolio-webp/grid_rect6.webp" 
-            alt="Hedi — Photo & Dragée" 
+          <img
+            {...imgAttrs("/portfolio-webp/grid_rect6.webp", "(min-width: 1024px) 49vw, 100vw")}
+            alt="Hedi, photographe de mariage à Vienne — Photo & Dragée"
             class="w-full h-full object-cover reveal-up"
             loading="eager"
+            fetchpriority="high"
             decoding="async"
           />
         </div>
@@ -127,9 +154,9 @@ import { siteConfig } from '../data/siteConfig';
         {/* Right: Second Image */}
         <div class="w-full lg:w-[50%] lg:pl-12">
           <div class="aspect-[3/2] w-full overflow-hidden">
-            <img 
-              src="/portfolio-webp/grid_rect14.webp?v=2" 
-              alt="Hedi en action — Photo & Dragée" 
+            <img
+              {...imgAttrs("/portfolio-webp/grid_rect14.webp?v=2", "(min-width: 1024px) 50vw, 100vw")}
+              alt="Hedi en action — photographe de mariage en Isère et région lyonnaise"
               class="w-full h-full object-cover reveal-up"
               loading="lazy"
               decoding="async"

@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { siteConfig } from '../../data/siteConfig';
 import { projects } from '../../data/projects';
+import { imgAttrs } from '../../utils/images';
 
 // 1. Generate a new path for every project
 export async function getStaticPaths() {
@@ -21,9 +22,11 @@ const { project, nextProject } = Astro.props;
 const nameParts = project.name.split(' + ');
 const firstName = nameParts[0];
 const secondName = nameParts.length > 1 ? nameParts[1] : '';
+
+const description = `Reportage photo du mariage de ${project.name} au ${project.location}. ${project.description} Par Photo & Dragée, photographe de mariage à Vienne (Isère) & Lyon.`;
 ---
 
-<Layout title={`${project.name} | ${siteConfig.title}`} hideFooter={true} hideHeader={true}>
+<Layout title={`${project.name} | ${siteConfig.title}`} description={description} hideFooter={true} hideHeader={true}>
   
   {/* Fixed Floating Header */}
   <header class="sc-3ac9ea57-0 dhbBPG header-container z-[100] mix-blend-difference" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0%);">
@@ -86,7 +89,7 @@ const secondName = nameParts.length > 1 ? nameParts[1] : '';
               {project.heroImage && (
               <div class="right-wrap relative z-10" style="clip-path: polygon(0px 0%, 100% 0%, 100% 100%, 0px 100%);">
                 <div class="sc-cacf51d0-0 kMtdZy image-cont relative h-full w-full overflow-hidden opacity-0 translate-y-[200px]">
-                  <img draggable="false" alt="" fetchpriority="high" loading="eager" decoding="async" src={project.heroImage} class="absolute inset-0 w-full h-full object-cover" style="color: transparent;" />
+                  <img draggable="false" alt={`Mariage ${project.name} — ${project.location}`} fetchpriority="high" loading="eager" decoding="async" {...imgAttrs(project.heroImage, "(min-width: 768px) 68vw, 100vw")} class="absolute inset-0 w-full h-full object-cover" style="color: transparent;" />
                 </div>
               </div>
               )}
@@ -100,21 +103,25 @@ const secondName = nameParts.length > 1 ? nameParts[1] : '';
                 <div class="image-wrapper gallery-item-wrapper for-desktop-anim for-mobile-anim shrink-0 relative z-10">
                   <div class="image-inner-wrapper js-project-anim w-auto h-full relative overflow-hidden flex items-center justify-center">
                     {i < 2 ? (
-                      <img 
-                        draggable="false" 
-                        alt={`${project.name} photo ${i+1}`} 
+                      <img
+                        draggable="false"
+                        alt={`Mariage ${project.name} au ${project.location} — photo ${i+1}`}
                         loading="eager"
-                        decoding="sync"
-                        src={img} 
-                        class="w-auto h-full object-cover block gallery-img" 
+                        decoding="async"
+                        {...imgAttrs(img, "(min-width: 768px) 65vw, 92vw")}
+                        class="w-auto h-full object-cover block gallery-img"
                       />
                     ) : (
-                      <img 
-                        draggable="false" 
-                        alt={`${project.name} photo ${i+1}`} 
-                        data-src={img}
+                      <img
+                        draggable="false"
+                        alt={`Mariage ${project.name} au ${project.location} — photo ${i+1}`}
+                        data-src={imgAttrs(img).src}
+                        data-srcset={imgAttrs(img).srcset}
+                        sizes="(min-width: 768px) 65vw, 92vw"
+                        width={imgAttrs(img).width}
+                        height={imgAttrs(img).height}
                         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
-                        class="w-auto h-full object-cover block gallery-img gallery-lazy" 
+                        class="w-auto h-full object-cover block gallery-img gallery-lazy"
                       />
                     )}
                   </div>
@@ -515,6 +522,10 @@ const secondName = nameParts.length > 1 ? nameParts[1] : '';
           if (entry.isIntersecting) {
             const img = entry.target as HTMLImageElement;
             if (img.dataset.src) {
+              if (img.dataset.srcset) {
+                img.srcset = img.dataset.srcset;
+                delete img.dataset.srcset;
+              }
               img.src = img.dataset.src;
               delete img.dataset.src;
               img.classList.remove('gallery-lazy');

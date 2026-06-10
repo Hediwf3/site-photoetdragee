@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import SmoothScroll from '../components/SmoothScroll.tsx';
 import LoadingOverlay from '../components/LoadingOverlay.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -14,22 +13,52 @@ interface Props {
   hideHeader?: boolean;
   hideFooterLogo?: boolean;
   hideLoadingOverlay?: boolean;
+  noindex?: boolean;
 }
 
-const { title, description = "Editorial Wedding Photography", image, hideFooter = false, hideHeader = false, hideFooterLogo = false, hideLoadingOverlay = false } = Astro.props;
+const { title, description, image, hideFooter = false, hideHeader = false, hideFooterLogo = false, hideLoadingOverlay = false, noindex = false } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="fr" class="scroll-smooth">
   <head>
-    <SEO title={title} description={description} image={image} />
+    <SEO title={title} description={description} image={image} noindex={noindex} />
   </head>
   <body class="bg-surface text-accent font-sans selection:bg-brand-200 antialiased min-h-screen flex flex-col">
     <!-- Loading Overlay (shows progress while critical images load) -->
     {!hideLoadingOverlay && <LoadingOverlay />}
 
-    <!-- Smooth Scrolling Instance (React Component running client-side) -->
-    <SmoothScroll client:load />
+    <!-- Smooth Scrolling (vanilla Lenis — no React needed on the client) -->
+    <script>
+      import Lenis from '@studio-freight/lenis';
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+      });
+
+      // Sync Lenis scroll with GSAP ScrollTrigger
+      lenis.on('scroll', ScrollTrigger.update);
+
+      // Drive Lenis from GSAP's ticker so both stay perfectly in sync
+      gsap.ticker.add((time: number) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+
+      // Provide global access for page-specific overrides
+      (window as any).lenis = lenis;
+    </script>
 
     <!-- Site Header Space -->
     {!hideHeader && <Header />}

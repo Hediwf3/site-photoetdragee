@@ -22,3 +22,19 @@ These defaults are optimized for AI coding agents (and humans) working on apps t
   needed. Always curl https://ai-gateway.vercel.sh/v1/models first; never trust model IDs from memory
 - For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
 <!-- VERCEL BEST PRACTICES END -->
+
+## Images du portfolio (workflow obligatoire)
+
+Après avoir ajouté ou remplacé une photo dans `public/portfolio-webp/`, lancer :
+
+```
+npm run images
+```
+
+Ce script (generate-responsive.mjs) génère les variantes responsive `-480w` / `-960w` / `-1600w`
+et met à jour `src/data/image-manifest.json`. Les templates construisent les attributs
+`srcset`/`width`/`height` via `imgAttrs()` (`src/utils/images.ts`) — sans manifeste à jour,
+les nouvelles images sont servies en pleine résolution.
+
+Note : les attributs HTML `pattern` dans les fichiers .astro doivent être écrits en
+expression JS (`pattern={"\\d{2}"}`) — Astro supprime les antislashs des attributs littéraux.

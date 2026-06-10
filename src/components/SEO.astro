@@ -6,16 +6,83 @@ export interface Props {
   description?: string;
   image?: string;
   canonicalURL?: URL | string;
+  noindex?: boolean;
 }
 
 const {
   title = siteConfig.title,
   description = siteConfig.description,
-  image = '/social-sharing.png', // Fallback social image
+  image = '/og-image.jpg', // Fallback social image (1200x630)
   canonicalURL = new URL(Astro.url.pathname, Astro.site || Astro.url.origin),
+  noindex = false,
 } = Astro.props;
 
 const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.title}`;
+const siteUrl = (Astro.site || Astro.url.origin).toString();
+
+// LocalBusiness structured data — keeps Google / Maps / AI assistants
+// (Gemini, ChatGPT, Perplexity…) able to identify the business, its city
+// and its service area unambiguously.
+const businessSchema = {
+  "@context": "https://schema.org",
+  "@type": ["LocalBusiness", "ProfessionalService"],
+  "@id": `${siteUrl}#business`,
+  "name": "Photo & Dragée — Photographe de mariage",
+  "alternateName": "Photo et dragée",
+  "description": "Photographe de mariage basé à Vienne (Isère, 38200), intervenant à Vienne, Lyon et dans toute la région Auvergne-Rhône-Alpes. Reportages de mariage au style éditorial et authentique, formule journée complète à 1600 €.",
+  "url": siteUrl,
+  "image": new URL(image, Astro.url).toString(),
+  "telephone": "+33652253578",
+  "email": "photoetdragee@gmail.com",
+  "founder": {
+    "@type": "Person",
+    "name": "Hedi",
+    "jobTitle": "Photographe de mariage"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Vienne",
+    "postalCode": "38200",
+    "addressRegion": "Auvergne-Rhône-Alpes",
+    "addressCountry": "FR"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 45.5256,
+    "longitude": 4.8742
+  },
+  "areaServed": [
+    { "@type": "City", "name": "Vienne" },
+    { "@type": "City", "name": "Lyon" },
+    { "@type": "AdministrativeArea", "name": "Isère" },
+    { "@type": "AdministrativeArea", "name": "Rhône" },
+    { "@type": "AdministrativeArea", "name": "Auvergne-Rhône-Alpes" }
+  ],
+  "priceRange": "€€",
+  "makesOffer": {
+    "@type": "Offer",
+    "name": "Reportage photo de mariage — journée complète",
+    "description": "Couverture intégrale de la journée de mariage, des préparatifs à la soirée : galerie en ligne retouchée, frais de déplacement, clé USB, 50 tirages en coffret premium et séance engagement offerte.",
+    "price": "1600",
+    "priceCurrency": "EUR"
+  },
+  "review": {
+    "@type": "Review",
+    "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+    "author": { "@type": "Person", "name": "Charlotte et Pierrick" },
+    "reviewBody": "Un grand professionnalisme, très attentionné tout au long de la journée. Il est le photographe idéal pour un mariage, ses photos sont sublimes et grâce à lui nous allons avoir de superbes souvenirs à vie."
+  },
+  "knowsAbout": [
+    "Photographie de mariage",
+    "Photographe mariage Vienne",
+    "Photographe mariage Lyon",
+    "Photographie éditoriale",
+    "Séance engagement"
+  ],
+  "sameAs": [
+    "https://www.instagram.com/photoetdragee/"
+  ]
+};
 ---
 
 <!-- Global Metadata -->
@@ -39,6 +106,13 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
 <title>{fullTitle}</title>
 <meta name="title" content={fullTitle} />
 <meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Local SEO geo hints -->
+<meta name="geo.region" content="FR-38" />
+<meta name="geo.placename" content="Vienne" />
+<meta name="geo.position" content="45.5256;4.8742" />
+<meta name="ICBM" content="45.5256, 4.8742" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
@@ -60,34 +134,33 @@ const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.
 <meta name="theme-color" content="#fafafa" />
 
 <!-- JSON-LD Structured Data for LocalBusiness -->
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "PhotographyService",
-  "name": siteConfig.title,
-  "image": Astro.url ? new URL(image, Astro.url).toString() : image,
-  "description": description,
-  "url": Astro.url ? Astro.url.origin : "https://www.estudiomanzanero.com",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Vienne",
-    "addressRegion": "Isère",
-    "addressCountry": "FR"
-  },
-  "areaServed": [
-    "Vienne",
-    "Lyon",
-    "Isère",
-    "France"
-  ],
-  "priceRange": "$$$$"
-})} />
+<script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />
 
-<!-- Google tag (gtag.js) -->
-<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-BFF0S2SCZZ"></script>
+<!-- Google tag (gtag.js) — deferred until interaction or post-load so it
+     never competes with images/fonts for bandwidth and main-thread time -->
 <script is:inline>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BFF0S2SCZZ');
+
+  (function () {
+    var loaded = false;
+    function loadGtag() {
+      if (loaded) return;
+      loaded = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-BFF0S2SCZZ';
+      document.head.appendChild(s);
+    }
+    ['scroll', 'click', 'touchstart', 'keydown', 'mousemove'].forEach(function (evt) {
+      window.addEventListener(evt, loadGtag, { once: true, passive: true });
+    });
+    if (document.readyState === 'complete') {
+      setTimeout(loadGtag, 2000);
+    } else {
+      window.addEventListener('load', function () { setTimeout(loadGtag, 2000); });
+    }
+  })();
 </script>

@@ -4,10 +4,12 @@ import { siteConfig } from '../data/siteConfig';
 
 // Import the centralized project data
 import { projects } from '../data/projects';
+import { imgAttrs } from '../utils/images';
 
+const description = "Découvrez nos reportages de mariage à Vienne, en Isère et dans la région lyonnaise : châteaux, domaines et histoires d'amour photographiées avec un regard éditorial.";
 ---
 
-<Layout title={`Projets | ${siteConfig.title}`} hideFooter={true}>
+<Layout title={`Projets | ${siteConfig.title}`} description={description} hideFooter={true}>
   <section class="min-h-[100dvh] md:h-[100dvh] w-full bg-surface relative overflow-y-auto md:overflow-hidden overflow-x-hidden flex flex-col justify-between pt-24 pb-8">
     
     {/* Using global header instead of absolute positioning */}
@@ -42,11 +44,12 @@ import { projects } from '../data/projects';
             </a>
 
             {/* The hidden center image (revealed on hover) */}
-            <img 
-              src={project.image} 
-              alt={`Projet de ${project.name}`} 
+            <img
+              {...imgAttrs(project.image, "(min-width: 768px) 24vw, 55vw")}
+              alt={`Mariage ${project.name} — ${project.location}`}
               class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55vw] sm:w-[39vw] md:w-[24vw] max-h-[44vh] md:max-h-[50vh] object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-[5]"
               loading="lazy"
+              decoding="async"
             />
           </li>
         ))}
