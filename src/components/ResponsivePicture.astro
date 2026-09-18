@@ -1,0 +1,24 @@
+---
+import { imgAttrs } from '../utils/images';
+
+interface Props {
+  src: string;
+  alt: string;
+  sizes: string;
+  class?: string;
+  hiddenOn?: 'mobile' | 'desktop';
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+}
+
+const { src, alt, sizes, class: className, hiddenOn, loading = 'lazy', fetchpriority } = Astro.props;
+// A CSS-hidden eager image still downloads. Select an inline empty source at
+// the hidden breakpoint instead, preserving the real photo as the fallback.
+const emptyImage = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>')}`;
+const hiddenMedia = hiddenOn === 'mobile' ? '(max-width: 767px)' : '(min-width: 768px)';
+---
+
+<picture style="display: contents">
+  {hiddenOn && <source media={hiddenMedia} srcset={emptyImage} />}
+  <img {...imgAttrs(src, sizes)} alt={alt} class={className} loading={loading} fetchpriority={fetchpriority} decoding="async" />
+</picture>

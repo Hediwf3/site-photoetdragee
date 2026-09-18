@@ -1,7 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { siteConfig } from '../data/siteConfig';
-import { imgAttrs } from '../utils/images';
+import ResponsivePicture from '../components/ResponsivePicture.astro';
+import AvailabilityLink from '../components/AvailabilityLink.astro';
 
 const title = "Photographe de mariage à Vienne (Isère) & Lyon | Photo & Dragée";
 const description = "Photo & Dragée — Hedi, photographe de mariage à Vienne (38200), Isère. Reportages éditoriaux et authentiques à Vienne, Lyon et en Auvergne-Rhône-Alpes. Formule journée complète 1600 €.";
@@ -39,7 +40,7 @@ const gridBoxes = [
   { class: "left-[36.05vw] top-[827.21vw] w-[48.14vw] h-[72.09vw] md:left-[53.64vw] md:top-[363.89vw] md:w-[21.23vw] md:h-[31.88vw]", href: "/projets/lucy-romain", src: "/portfolio-webp/grid_rect14.webp?v=2", alt: "La mariée souriante - Lucy + Romain", sizes: "21vw" },
 ];
 
-// Mobile infinite grid feed (same order/links/photos as before)
+// Mobile gallery: preserve every photo and its order without duplicating the DOM.
 const mobileItems = [
   { href: "/projets/lucy-romain", src: "/portfolio-webp/rect1.webp", alt: "Photographie éditoriale de mariage - Lucy + Romain" },
   { href: "/projets/assia-jeremy", src: "/portfolio-webp/rect2.webp", alt: "Couple de mariés - Assia + Jérémy" },
@@ -88,11 +89,8 @@ const mobileItems = [
   { href: "/projets/assia-jeremy", src: "/portfolio-webp/Assia Jeremy Mariage HD-549.webp", alt: "Mariage Assia + Jérémy" },
 ];
 
-// ~47vw per column on mobile; tiny on desktop (grid is hidden there, only the
-// first eager items would ever fetch — they pick the smallest variant)
-const mobileSizes = "(min-width: 768px) 1px, 47vw";
-// Hero rects are display:none on mobile but eager — keep their mobile fetch tiny
-const heroSizes = "(max-width: 767px) 1px, 14vw";
+const mobileSizes = 'calc((100vw - 36px) / 2)';
+const heroSizes = '14vw';
 
 // Client testimonials cycled in the on-grid review box (all 5★).
 // Charlotte stays first because that's the original spot.
@@ -120,9 +118,13 @@ const reviews = [
 ];
 ---
 
-<Layout title={title} description={description} hideFooterLogo={true}>
+<Layout title={title} description={description} hideFooterLogo={true} hideLoadingOverlay={true}>
 
   <section class="relative w-full h-[100vh] overflow-hidden flex-col pt-[30vh] bg-surface hidden md:flex">
+
+    <div class="absolute right-[5%] top-6 z-40 text-accent">
+      <AvailabilityLink />
+    </div>
 
     {/* Background Floating Rectangles */}
     <div class="absolute inset-0 z-0 w-full h-full pointer-events-none">
@@ -137,13 +139,14 @@ const reviews = [
             data-movement={box.movement}
           >
             <a href={box.link} class="block w-full h-full cursor-pointer">
-              {box.image && <img
-                {...imgAttrs(box.image, heroSizes)}
+              {box.image && <ResponsivePicture
+                src={box.image}
+                sizes={heroSizes}
+                hiddenOn="mobile"
                 alt={box.alt}
                 class="w-full h-full object-cover"
                 loading={box.priority ? "eager" : "lazy"}
-                decoding="async"
-                {...(box.priority ? { fetchpriority: "high" } : {})}
+                fetchpriority={box.priority ? 'high' : undefined}
               />}
             </a>
           </div>
@@ -199,7 +202,7 @@ const reviews = [
     {gridBoxes.map((box) => (
       <div class={`absolute bg-surface overflow-hidden ${box.class}`}>
         <a href={box.href} class="block w-full h-full">
-          <img {...imgAttrs(box.src, box.sizes)} alt={box.alt} class="w-full h-full object-cover scale-[1.01]" loading="lazy" decoding="async" />
+          <ResponsivePicture src={box.src} sizes={box.sizes} hiddenOn="mobile" alt={box.alt} class="w-full h-full object-cover scale-[1.01]" />
         </a>
       </div>
     ))}
@@ -234,7 +237,7 @@ const reviews = [
       </p>
     </div>
     {/* Text Box 4 — Reviews Carousel */}
-    <div class="js-reviews absolute left-[10.23vw] top-[663.26vw] w-[53.02vw] md:left-[14.42vw] md:top-[264.95vw] md:w-[22.42vw] text-center md:text-left text-accent leading-relaxed flex flex-col justify-center">
+    <div role="region" aria-label="Avis des mariés" aria-roledescription="carrousel" class="js-reviews absolute left-[10.23vw] top-[663.26vw] w-[53.02vw] md:left-[14.42vw] md:top-[264.95vw] md:w-[22.42vw] text-center md:text-left text-accent leading-relaxed flex flex-col justify-center">
       <div class="js-reviews-track grid">
         {reviews.map((review, i) => (
           <figure class={`js-review-slide col-start-1 row-start-1 m-0 flex flex-col items-start gap-2 ${i === 0 ? 'is-active' : ''}`} data-index={i}>
@@ -252,8 +255,9 @@ const reviews = [
       </div>
       <div class="js-reviews-dots flex justify-center md:justify-start items-center gap-[6px] mt-5 md:mt-4">
         {reviews.map((_, i) => (
-          <button type="button" class={`review-dot ${i === 0 ? 'is-active' : ''}`} data-dot={i} aria-label={`Avis ${i + 1}`}></button>
+          <button type="button" class={`review-dot ${i === 0 ? 'is-active' : ''}`} data-dot={i} aria-label={`Avis ${i + 1}`} aria-pressed={i === 0}></button>
         ))}
+        <button type="button" class="review-pause" aria-label="Mettre les avis en pause" aria-pressed="false">Pause</button>
       </div>
     </div>
     {/* Text Box 5 */}
@@ -266,6 +270,7 @@ const reviews = [
       <p class="text-[3vw] md:text-[1.1vw] font-serif font-light opacity-80 text-balance leading-relaxed">
         Je me tiens à vos côtés des premiers préparatifs matinaux aux heures plus avancées de la soirée, de l’intimité des futurs mariés en train d’enfiler leur tenue à l’effervescence de la découpe du gâteau.
       </p>
+      <AvailabilityLink class="mt-6" />
     </div>
   </section>
 
@@ -277,21 +282,23 @@ const reviews = [
     <p class="font-serif text-2xl font-light leading-snug text-balance mt-4">
       Capturer cet amour qui vous lie, avec sincérité et élégance.
     </p>
+    <AvailabilityLink class="mt-4" />
   </section>
 
-  {/* === MOBILE INFINITE GRID SECTION (AVAGYAN STYLE) === */}
-  <section class="block md:hidden w-full bg-surface pb-12 js-mobile-infinite-wrapper">
-    <div class="js-mobile-infinite-grid grid grid-cols-2 gap-[12px] px-[12px] items-start">
+  {/* === MOBILE GALLERY (same layout, with a reachable footer) === */}
+  <section class="block md:hidden w-full bg-surface pb-12">
+    <div class="js-mobile-grid grid grid-cols-2 gap-[12px] px-[12px] items-start">
 
       {mobileItems.slice(0, 12).map((item, i) => (
-        <a href={item.href} class="mobile-grid-item block w-full bg-surface overflow-hidden" style="aspect-ratio: 3/4;">
-          <img
-            {...imgAttrs(item.src, mobileSizes)}
+        <a href={item.href} class={`mobile-grid-item ${i < 4 ? 'revealed' : ''} block w-full bg-surface overflow-hidden`} style="aspect-ratio: 3/4;">
+          <ResponsivePicture
+            src={item.src}
+            sizes={mobileSizes}
+            hiddenOn="desktop"
             alt={item.alt}
             class="w-full h-full object-cover"
-            loading={i < 2 ? "eager" : "lazy"}
-            decoding="async"
-            {...(i === 0 ? { fetchpriority: "high" } : {})}
+            loading={i < 4 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 || i === 3 ? 'high' : undefined}
           />
         </a>
       ))}
@@ -309,7 +316,7 @@ const reviews = [
 
       {mobileItems.slice(12, 32).map((item) => (
         <a href={item.href} class="mobile-grid-item block w-full bg-surface overflow-hidden" style="aspect-ratio: 3/4;">
-          <img {...imgAttrs(item.src, mobileSizes)} alt={item.alt} class="w-full h-full object-cover" loading="lazy" decoding="async" />
+          <ResponsivePicture src={item.src} sizes={mobileSizes} hiddenOn="desktop" alt={item.alt} class="w-full h-full object-cover" />
         </a>
       ))}
 
@@ -320,7 +327,7 @@ const reviews = [
           Une formule unique qui couvre l’intégralité de votre journée de mariage, des préparatifs à la soirée.
         </p>
         <div class="font-serif text-[12vw] font-light leading-none my-5 opacity-90 tracking-widest">— 1600 € —</div>
-        <div class="js-reviews mt-4">
+        <div role="region" aria-label="Avis des mariés" aria-roledescription="carrousel" class="js-reviews mt-4">
           <div class="js-reviews-track grid">
             {reviews.map((review, i) => (
               <figure class={`js-review-slide col-start-1 row-start-1 m-0 flex flex-col items-center gap-2 ${i === 0 ? 'is-active' : ''}`} data-index={i}>
@@ -336,18 +343,23 @@ const reviews = [
           </div>
           <div class="js-reviews-dots flex justify-center items-center gap-[6px] mt-4">
             {reviews.map((_, i) => (
-              <button type="button" class={`review-dot ${i === 0 ? 'is-active' : ''}`} data-dot={i} aria-label={`Avis ${i + 1}`}></button>
+              <button type="button" class={`review-dot ${i === 0 ? 'is-active' : ''}`} data-dot={i} aria-label={`Avis ${i + 1}`} aria-pressed={i === 0}></button>
             ))}
+            <button type="button" class="review-pause" aria-label="Mettre les avis en pause" aria-pressed="false">Pause</button>
           </div>
         </div>
+        <AvailabilityLink class="mt-5" />
       </div>
 
       {mobileItems.slice(32).map((item) => (
         <a href={item.href} class="mobile-grid-item block w-full bg-surface overflow-hidden" style="aspect-ratio: 3/4;">
-          <img {...imgAttrs(item.src, mobileSizes)} alt={item.alt} class="w-full h-full object-cover" loading="lazy" decoding="async" />
+          <ResponsivePicture src={item.src} sizes={mobileSizes} hiddenOn="desktop" alt={item.alt} class="w-full h-full object-cover" />
         </a>
       ))}
 
+    </div>
+    <div class="text-center mt-8">
+      <a href="/projets/" class="availability-link">Voir tous les reportages <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 
@@ -356,10 +368,13 @@ const reviews = [
 <style>
   /* Avagyan-Style Mobile Reveal — slide-up with opacity */
   .mobile-grid-item, .mobile-text-block {
-    opacity: 0;
-    transform: translateY(25px);
     transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .js-mobile-grid.is-enhanced .mobile-grid-item:not(.revealed),
+  .js-mobile-grid.is-enhanced .mobile-text-block:not(.revealed) {
+    opacity: 0;
+    transform: translateY(25px);
   }
   .mobile-grid-item.revealed, .mobile-text-block.revealed {
     opacity: 1;
@@ -387,6 +402,18 @@ const reviews = [
     margin-bottom: -0.2em;
   }
   .review-dot {
+    width: 24px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+  }
+  .review-dot::after {
+    content: '';
     width: 7px;
     height: 7px;
     border-radius: 9999px;
@@ -397,13 +424,23 @@ const reviews = [
     padding: 0;
     transition: opacity 0.4s ease, transform 0.4s ease;
   }
-  .review-dot.is-active {
+  .review-dot.is-active::after {
     opacity: 0.85;
     transform: scale(1.4);
+  }
+  .review-pause {
+    min-height: 36px;
+    padding: 4px 8px;
+    font: 10px var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .js-review-slide { transition: none; }
+    .js-mobile-grid.is-enhanced .mobile-grid-item,
+    .js-mobile-grid.is-enhanced .mobile-text-block { opacity: 1; transform: none; transition: none; }
   }
 </style>
 
@@ -585,75 +622,25 @@ const reviews = [
     });
   }
 
-  // Mobile Infinite Grid Logic
-  const mobileGrid = document.querySelector('.js-mobile-infinite-grid');
-  if (mobileGrid && window.innerWidth < 768) {
-      // 1. Setup Intersection Observer for ultra-smooth buttery reveal animations
-      const revealOptions = {
-          root: null,
-          rootMargin: "0px 0px -50px 0px", // Trigger slightly before it comes fully in view
-          threshold: 0.05
-      };
-
-      const revealObserver = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                  entry.target.classList.add('revealed');
-                  // We purposely don't unobserve so that if cloned nodes appear, or user scrolls up, we can reset if needed.
-                  // But for pure avagyan style, one-time reveal or re-reveal is fine.
-                  observer.unobserve(entry.target);
-              }
-          });
-      }, revealOptions);
-
-      // Function to attach observer to elements
-      const observeItems = (parentNode: ParentNode) => {
-          const items = parentNode.querySelectorAll('.mobile-grid-item, .mobile-text-block');
-          items.forEach(el => revealObserver.observe(el));
-      };
-
-      // Initial observe
-      observeItems(document);
-
-      // 2. Infinite Loop Logic
-      // Store a full copy of the original nodes HTML to duplicate seamlessly
-      const originalHTMLStrings = Array.from(mobileGrid.children).map(node => node.outerHTML);
-
-      let isWorking = false;
-      const onScroll = () => {
-          if (window.innerWidth >= 768) return;
-          if (isWorking) return;
-
-          const scrollY = window.scrollY || document.documentElement.scrollTop;
-          const viewportHeight = window.innerHeight;
-          const bodyHeight = document.documentElement.scrollHeight;
-
-          // If we reach within 1500px of the bottom of the page, append massive chunks!
-          if ((scrollY + viewportHeight) >= (bodyHeight - 1500)) {
-              isWorking = true;
-
-              // Append a full copy of the entire feed seamlessly
-              // We inject as string for max performance over 100s of DOM nodes
-              const currentHTML = mobileGrid.innerHTML;
-              mobileGrid.innerHTML = currentHTML + originalHTMLStrings.join("");
-
-              // Re-observe the newly appended items
-              observeItems(document);
-
-              // Debounce
-              setTimeout(() => { isWorking = false; }, 300);
-          }
-      };
-
-      // Listen to scroll events
-      window.addEventListener('scroll', onScroll, { passive: true });
-      // Pre-fire once to ensure large enough feed if the screen is super tall
-      onScroll();
+  // Keep all original photographs, without cloning the feed or its listeners.
+  // Progressive enhancement: the gallery remains visible if JavaScript fails.
+  const mobileGrid = document.querySelector('.js-mobile-grid');
+  if (mobileGrid && 'IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px 80px 0px', threshold: 0.01 });
+    mobileGrid.querySelectorAll('.mobile-grid-item:not(.revealed), .mobile-text-block').forEach(el => revealObserver.observe(el));
+    mobileGrid.classList.add('is-enhanced');
   }
 
   // === Sliding Reviews Carousel — c-heading-style line-by-line wave reveal ===
   // The page has two carousels (desktop on-grid box + mobile inline). Same logic for each.
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   document.querySelectorAll<HTMLElement>('.js-reviews').forEach((section) => {
     const slides = Array.from(section.querySelectorAll<HTMLElement>('.js-review-slide'));
     const dots = Array.from(section.querySelectorAll<HTMLElement>('.review-dot'));
@@ -663,16 +650,29 @@ const reviews = [
     let current = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
     let split: SplitType | null = null;
+    let animation: gsap.core.Timeline | null = null;
+    let visible = false;
+    let paused = motionPreference.matches;
+    let hovering = false;
+    const pauseButton = section.querySelector<HTMLButtonElement>('.review-pause');
 
-    const showReview = (index: number) => {
-      slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
-      dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+    const showReview = (index: number, animate = true) => {
+      animation?.revert();
+      animation = null;
+      split?.revert();
+      split = null;
+      slides.forEach((s, i) => {
+        s.classList.toggle('is-active', i === index);
+        s.setAttribute('aria-hidden', String(i !== index));
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle('is-active', i === index);
+        d.setAttribute('aria-pressed', String(i === index));
+      });
 
       const slide = slides[index];
       const quote = slide.querySelector<HTMLElement>('.js-review-quote');
-      if (reduceMotion || !quote) return;
-
-      if (split) split.revert();
+      if (motionPreference.matches || !animate || !quote) return;
       split = new SplitType(quote, { types: 'lines,words' });
 
       // Same clip-mask trick the hero c-heading uses, applied per line
@@ -686,6 +686,7 @@ const reviews = [
       gsap.killTweensOf(slide.querySelectorAll('.word, .js-review-meta'));
 
       const tl = gsap.timeline();
+      animation = tl;
       split.lines?.forEach((line, i) => {
         const words = (line as HTMLElement).querySelectorAll('.word');
         tl.from(words, {
@@ -706,25 +707,57 @@ const reviews = [
     };
 
     const next = () => { current = (current + 1) % slides.length; showReview(current); };
-    const startAuto = () => { if (!timer) timer = setInterval(next, INTERVAL); };
     const stopAuto = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const syncAuto = () => {
+      stopAuto();
+      const shouldRun = visible && !paused && !hovering && !document.hidden && !section.contains(document.activeElement);
+      if (shouldRun) timer = setInterval(next, INTERVAL);
+      if (pauseButton) {
+        pauseButton.textContent = paused ? 'Lecture' : 'Pause';
+        pauseButton.setAttribute('aria-label', paused ? 'Activer le défilement des avis' : 'Mettre les avis en pause');
+        pauseButton.setAttribute('aria-pressed', String(paused));
+      }
+    };
 
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => {
         current = i;
         showReview(current);
-        stopAuto();
-        startAuto();
+        syncAuto();
       });
     });
 
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) { showReview(current); startAuto(); }
-        else { stopAuto(); }
+        visible = entry.isIntersecting;
+        if (visible) showReview(current);
+        syncAuto();
       });
     }, { threshold: 0.2 });
     sectionObserver.observe(section);
+    pauseButton?.addEventListener('click', () => { paused = !paused; syncAuto(); });
+    section.addEventListener('pointerenter', (event) => { if (event.pointerType === 'mouse') { hovering = true; syncAuto(); } });
+    section.addEventListener('pointerleave', () => { hovering = false; syncAuto(); });
+    section.addEventListener('focusin', syncAuto);
+    section.addEventListener('focusout', () => queueMicrotask(syncAuto));
+    document.addEventListener('visibilitychange', syncAuto);
+    motionPreference.addEventListener('change', () => {
+      paused = motionPreference.matches;
+      showReview(current, false);
+      syncAuto();
+    });
+    // Reflow line masks after a viewport/font change, without a new animation.
+    let lastWidth = section.getBoundingClientRect().width;
+    new ResizeObserver(() => {
+      const width = section.getBoundingClientRect().width;
+      if (Math.abs(width - lastWidth) > 1) {
+        lastWidth = width;
+        showReview(current, false);
+      }
+    }).observe(section);
+    document.fonts.ready.then(() => { if (visible) showReview(current, false); });
+    showReview(current, false);
+    syncAuto();
   });
 
 </script>

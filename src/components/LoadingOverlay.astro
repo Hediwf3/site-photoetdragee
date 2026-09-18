@@ -6,7 +6,8 @@
  * 1. Preloads critical above-the-fold images
  * 2. Shows a smooth 0-100% progress counter
  * 3. Fades away with a curtain-reveal animation once assets are ready
- * 4. Has a maximum timeout (6s) to never block the user indefinitely
+ * 4. Dismisses independently of image completion and fails open without JS
+ * 5. Stays hidden for mobile and reduced-motion visitors
  */
 ---
 
@@ -34,6 +35,8 @@
     opacity: 1;
     visibility: visible;
     will-change: opacity;
+    /* Fail open even if the loader's JavaScript never executes. */
+    animation: loaderFailOpen 0.3s 3s forwards;
   }
 
   .loading-overlay.done {
@@ -95,6 +98,12 @@
       transform: translateY(0);
     }
   }
+  @keyframes loaderFailOpen {
+    to { opacity: 0; visibility: hidden; pointer-events: none; }
+  }
+  @media (max-width: 767px), (prefers-reduced-motion: reduce) {
+    .loading-overlay { display: none; }
+  }
 </style>
 
 <script>
@@ -137,14 +146,16 @@
     
     // Filter to only eager/critical images
     const criticalImages = allImages.filter(img => {
-      return img.loading === 'eager' || 
+      const rect = img.getBoundingClientRect();
+      const inView = rect.width > 0 && rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0;
+      return inView && (img.loading === 'eager' ||
              img.getAttribute('fetchpriority') === 'high' ||
-             !img.loading;
+             !img.loading);
     });
 
     // If no critical images to track, dismiss quickly
     if (criticalImages.length === 0) {
-      animateProgress(100, () => setTimeout(() => dismissOverlay(overlay), 100));
+      dismissOverlay(overlay);
       return;
     }
 
@@ -171,12 +182,12 @@
       }
     });
 
-    // Safety timeout — never block user for more than 6 seconds
+    // Independent of image completion and of the decorative counter.
     setTimeout(() => {
       if (!overlay.classList.contains('done')) {
-        animateProgress(100, () => dismissOverlay(overlay));
+        dismissOverlay(overlay);
       }
-    }, 6000);
+    }, 1500);
   }
 
   // Run immediately (before DOMContentLoaded for fastest start)

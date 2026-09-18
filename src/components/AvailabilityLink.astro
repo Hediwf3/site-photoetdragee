@@ -1,0 +1,5 @@
+---
+interface Props { class?: string; }
+const { class: className = '' } = Astro.props;
+---
+<a href="/contact/" class={`availability-link ${className}`}>Vérifier ma date <span aria-hidden="true">↗</span></a>

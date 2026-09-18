@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Merci pour votre demande" noindex={true} hideLoadingOverlay={true} hideFooter={true}>
+  <section class="min-h-[85dvh] flex flex-col items-center justify-center text-center px-6 py-32">
+    <p class="font-sans text-xs uppercase tracking-[0.2em] mb-8">Photo &amp; Dragée</p>
+    <h1 class="font-serif font-light text-5xl md:text-7xl mb-8">Merci pour<br/><em>votre confiance.</em></h1>
+    <p class="font-serif text-xl max-w-lg leading-relaxed">Votre demande a été transmise. Je reviendrai vers vous pour parler de votre mariage et vérifier ma disponibilité.</p>
+    <p class="font-sans text-sm opacity-75 max-w-lg mt-5">L’envoi du formulaire ne réserve pas encore votre date. Pensez à vérifier vos courriers indésirables pour retrouver ma réponse.</p>
+    <a href="/projets/" class="availability-link mt-10">Découvrir les reportages <span aria-hidden="true">↗</span></a>
+    <p class="text-sm mt-10">Une précision à ajouter ? <a class="underline" href="mailto:photoetdragee@gmail.com">Écrivez-moi</a> ou <a class="underline" href="tel:+33652253578">appelez-moi</a>.</p>
+  </section>
+</Layout>

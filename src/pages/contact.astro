@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { siteConfig } from '../data/siteConfig';
 ---
 
-<Layout title={`Contact — Photographe de mariage à Vienne | ${siteConfig.title}`} description="Contactez Photo & Dragée, photographe de mariage à Vienne (Isère) & Lyon : vérifiez la disponibilité de votre date et parlez-nous de votre mariage." hideFooter={true}>
+<Layout title={`Contact — Photographe de mariage à Vienne | ${siteConfig.title}`} description="Contactez Photo & Dragée, photographe de mariage à Vienne (Isère) & Lyon : vérifiez la disponibilité de votre date et parlez-nous de votre mariage." hideFooter={true} hideLoadingOverlay={true}>
   
   {/* Using Global Layout Header for Menu / Navigation consistently */}
 
@@ -27,8 +27,8 @@ import { siteConfig } from '../data/siteConfig';
         <div class="flex flex-col gap-3 font-sans font-light text-[10px] md:text-xs tracking-[0.15em] uppercase opacity-80 mt-4 md:mt-16">
           <p>Disponible en Auvergne Rhône-Alpes</p>
           <a href="https://www.instagram.com/photoetdragee/" target="_blank" class="hover:italic transition-all w-fit mt-1">Instagram @photoetdragee</a>
-          <a href="#" class="bot-protected-email hover:italic transition-all w-fit pb-1 border-b border-accent/30 hover:border-accent" data-p1="photoetdragee" data-p2="gmail.com">Afficher l'email</a>
-          <a href="#" class="bot-protected-phone hover:italic transition-all w-fit mt-1" data-p1="06" data-p2="52253578">Afficher le numéro</a>
+          <a href="mailto:photoetdragee@gmail.com" class="hover:italic transition-all w-fit py-3 border-b border-accent/30 hover:border-accent">photoetdragee@gmail.com</a>
+          <a href="tel:+33652253578" class="hover:italic transition-all w-fit py-3">06 52 25 35 78</a>
         </div>
       </div>
     </div>
@@ -39,19 +39,21 @@ import { siteConfig } from '../data/siteConfig';
         
         {/* Anti-spam & Config options for FormSubmit */}
         <input type="hidden" name="_subject" value="Nouvelle demande de contact - Photo & Dragée" />
-        <input type="text" name="_honey" style="display:none" />
-        <input type="hidden" name="_template" value="box" />
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_next" value={new URL('/merci/', Astro.site).toString()} />
+        <input type="hidden" name="_autoresponse" value="Merci pour votre message à Photo & Dragée. Votre demande a été transmise. Je reviendrai vers vous pour échanger sur votre mariage et vérifier ma disponibilité. Votre date n’est pas réservée à ce stade. À bientôt, Hedi — photoetdragee@gmail.com — 06 52 25 35 78." />
         
         {/* Row 1 */}
         <div class="flex-1 flex flex-col justify-center items-start md:flex-row md:items-center border-b border-accent/30 group min-h-[70px] md:min-h-[40px] py-3 md:py-0">
           <label for="name" class="w-full md:w-[45%] uppercase font-serif text-[11px] md:text-sm lg:text-base tracking-[0.15em] text-accent mb-1 md:mb-0">Vos Noms : <span class="text-[9px] opacity-40 font-sans tracking-wider align-top ml-1">(REQUIS)</span></label>
-          <input type="text" id="name" name="name" required class="w-full md:w-[55%] bg-transparent border-none outline-none font-serif text-left md:text-right text-sm md:text-lg lg:text-xl text-accent placeholder-accent/30 focus:placeholder-transparent transition-all" placeholder="Votre nom" />
+          <input type="text" id="name" name="name" autocomplete="name" required class="w-full md:w-[55%] bg-transparent border-none outline-none font-serif text-left md:text-right text-base md:text-lg lg:text-xl text-accent placeholder-accent/30 focus:placeholder-transparent transition-all" placeholder="Vos prénoms" />
         </div>
         
         {/* Row 2 */}
         <div class="flex-1 flex flex-col justify-center items-start md:flex-row md:items-center border-b border-accent/30 group min-h-[70px] md:min-h-[40px] py-3 md:py-0">
           <label for="email" class="w-full md:w-[45%] uppercase font-serif text-[11px] md:text-sm lg:text-base tracking-[0.15em] text-accent mb-1 md:mb-0">Email : <span class="text-[9px] opacity-40 font-sans tracking-wider align-top ml-1">(REQUIS)</span></label>
-          <input type="email" id="email" name="email" required pattern={"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$"} title="Veuillez entrer un email valide" class="w-full md:w-[55%] bg-transparent border-none outline-none font-serif text-left md:text-right text-sm md:text-lg lg:text-xl text-accent placeholder-accent/30 focus:placeholder-transparent transition-all" placeholder="hello@exemple.com" />
+          <input type="email" id="email" name="email" autocomplete="email" required class="w-full md:w-[55%] bg-transparent border-none outline-none font-serif text-left md:text-right text-base md:text-lg lg:text-xl text-accent placeholder-accent/30 focus:placeholder-transparent transition-all" placeholder="hello@exemple.com" />
         </div>
         
         {/* Row 3 */}
@@ -74,62 +76,29 @@ import { siteConfig } from '../data/siteConfig';
 
         {/* Submit Button */}
         <div class="mt-6 flex justify-end shrink-0 pb-2">
-           <button type="submit" class="uppercase font-sans tracking-[0.2em] text-[10px] md:text-xs border-b border-accent pb-1 hover:italic transition-all duration-300">Envoyer la demande</button>
+           <button type="submit" class="uppercase font-sans tracking-[0.2em] text-xs border-b border-accent py-3 min-h-[44px] hover:italic transition-all duration-300">Envoyer la demande</button>
         </div>
       </form>
     </div>
   </section>
 
   <script>
-    // Formatage automatique du champ Date (JJ/MM/AAAA)
-    const dateInput = document.getElementById('date');
+    import { formatWeddingDate, weddingDateError } from '../utils/contact-date.mjs';
+    const dateInput = document.querySelector<HTMLInputElement>('#date');
     if (dateInput) {
-      dateInput.addEventListener('input', function(e) {
-        // @ts-ignore
-        const target = e.target;
-        let val = target.value.replace(/\D/g, '').substring(0, 8);
-        if (val.length >= 5) {
-          target.value = val.substring(0, 2) + '/' + val.substring(2, 4) + '/' + val.substring(4, 8);
-        } else if (val.length >= 3) {
-          target.value = val.substring(0, 2) + '/' + val.substring(2, 4);
-        } else {
-          target.value = val;
-        }
+      const validateDate = () => dateInput.setCustomValidity(weddingDateError(dateInput.value));
+      dateInput.addEventListener('input', () => {
+        dateInput.value = formatWeddingDate(dateInput.value);
+        validateDate();
       });
+      dateInput.addEventListener('change', validateDate);
+      window.addEventListener('pageshow', validateDate);
     }
-
-    // Bot protection
-    document.querySelectorAll('.bot-protected-email').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        const p1 = el.getAttribute('data-p1');
-        const p2 = el.getAttribute('data-p2');
-        if (p1 && p2) {
-          const email = `${p1}@${p2}`;
-          const a = document.createElement('a');
-          a.href = `mailto:${email}`;
-          a.className = el.className;
-          a.textContent = email;
-          el.replaceWith(a);
-        }
-      });
-    });
-    
-    document.querySelectorAll('.bot-protected-phone').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        const pre = el.getAttribute('data-p1');
-        const suf = el.getAttribute('data-p2');
-        if (pre && suf) {
-          const phone = `${pre}${suf}`;
-          const formatted = `${pre} ${suf.match(/.{1,2}/g)?.join(' ')}`;
-          const a = document.createElement('a');
-          a.href = `tel:${phone}`;
-          a.className = el.className;
-          a.textContent = formatted;
-          el.replaceWith(a);
-        }
-      });
-    });
   </script>
+  <style>
+    @media (max-width: 767px) {
+      input:not([type="hidden"]), textarea { font-size: 16px; }
+    }
+    input:focus-visible, textarea:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+  </style>
 </Layout>

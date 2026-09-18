@@ -9,7 +9,7 @@ export const siteConfig = {
         { label: "Projets", href: "/projets" },
         { label: "À Propos", href: "/a-propos" },
         { label: "FAQ", href: "/a-propos#faq" },
-        { label: "Contact", href: "/contact" },
+        { label: "Vérifier ma date", href: "/contact/" },
     ],
 
     // ==========================================

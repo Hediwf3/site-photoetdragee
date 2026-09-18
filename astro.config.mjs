@@ -11,7 +11,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       // /trier/* is an internal gallery-sorting tool — keep it out of search
-      filter: (page) => !page.includes('/trier/')
+      filter: (page) => !page.includes('/trier/') && !/\/merci\/?$/.test(page)
     })
   ]
 });
