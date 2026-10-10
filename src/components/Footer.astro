@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '../data/siteConfig';
+import { projects } from '../data/projects';
 
 interface Props {
   hideLogo?: boolean;
@@ -30,6 +31,15 @@ const currentYear = new Date().getFullYear();
     {/* Links */}
     <div class="flex flex-col sm:flex-row gap-12 text-sm font-sans uppercase tracking-widest font-light">
       <div class="flex flex-col gap-4">
+        <span class="opacity-50 text-xs">Mariages photographiés</span>
+        {projects.map((project) => (
+          <a href={`/projets/${project.slug}/`} class="lg:whitespace-nowrap hover:italic transition-all duration-300">
+            {project.venue.name}
+          </a>
+        ))}
+      </div>
+
+      <div class="flex flex-col gap-4">
         <span class="opacity-50 text-xs">Navigation</span>
         {siteConfig.navLinks.map((link) => (
           <a href={link.href} class="hover:italic transition-all duration-300">
@@ -47,47 +57,12 @@ const currentYear = new Date().getFullYear();
 
       <div class="flex flex-col gap-4">
         <span class="opacity-50 text-xs">Contact</span>
-        <a href="#" class="bot-protected-email hover:italic transition-all duration-300" data-p1="photoetdragee" data-p2="gmail.com">Afficher l'email</a>
-        <a href="#" class="bot-protected-phone hover:italic transition-all duration-300" data-p1="06" data-p2="52253578">Afficher le numéro</a>
+        <a href="tel:+33652253578" class="hover:italic transition-all duration-300">06 52 25 35 78</a>
+        <a href="mailto:photoetdragee@gmail.com" class="normal-case hover:italic transition-all duration-300">photoetdragee@gmail.com</a>
+        <span class="opacity-75">Vienne (38200), Isère</span>
       </div>
     </div>
 
   </div>
 
 </footer>
-
-<script>
-  // Bot protection
-  document.querySelectorAll('.bot-protected-email').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      const p1 = el.getAttribute('data-p1');
-      const p2 = el.getAttribute('data-p2');
-      if (p1 && p2) {
-        const email = `${p1}@${p2}`;
-        const a = document.createElement('a');
-        a.href = `mailto:${email}`;
-        a.className = el.className;
-        a.textContent = email;
-        el.replaceWith(a);
-      }
-    });
-  });
-  
-  document.querySelectorAll('.bot-protected-phone').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      const pre = el.getAttribute('data-p1');
-      const suf = el.getAttribute('data-p2');
-      if (pre && suf) {
-        const phone = `${pre}${suf}`;
-        const formatted = `${pre} ${suf.match(/.{1,2}/g)?.join(' ')}`;
-        const a = document.createElement('a');
-        a.href = `tel:${phone}`;
-        a.className = el.className;
-        a.textContent = formatted;
-        el.replaceWith(a);
-      }
-    });
-  });
-</script>

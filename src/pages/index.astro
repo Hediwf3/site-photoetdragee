@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { siteConfig } from '../data/siteConfig';
+import { projects } from '../data/projects';
 import ResponsivePicture from '../components/ResponsivePicture.astro';
 import AvailabilityLink from '../components/AvailabilityLink.astro';
 
@@ -89,6 +90,15 @@ const mobileItems = [
   { href: "/projets/assia-jeremy", src: "/portfolio-webp/Assia Jeremy Mariage HD-549.webp", alt: "Mariage Assia + Jérémy" },
 ];
 
+// Images linking to a reportage also name its venue: the alt text is the link's anchor text.
+const withVenue = (alt: string, href?: string) => {
+  const project = projects.find(p => href?.startsWith(`/projets/${p.slug}`));
+  return project ? `${alt} ${project.venue.inName}` : alt;
+};
+for (const box of photoBoxes) box.alt = withVenue(box.alt, box.link);
+for (const box of gridBoxes) box.alt = withVenue(box.alt, box.href);
+for (const item of mobileItems) item.alt = withVenue(item.alt, item.href);
+
 const mobileSizes = 'calc((100vw - 36px) / 2)';
 const heroSizes = '14vw';
 
@@ -158,25 +168,25 @@ const reviews = [
   {/* NEW: Top Caption (Separated from main heading) */}
   <section class="w-full bg-surface text-accent pt-4 md:pt-8 pb-8 hidden md:flex justify-center text-center">
     <div class="overflow-hidden">
-      <div class="js-top-caption font-sans text-xs md:text-sm uppercase tracking-widest opacity-80">
+      <h1 class="js-top-caption font-sans font-normal text-xs md:text-sm uppercase tracking-widest opacity-80">
         PHOTOGRAPHE DE MARIAGE À VIENNE & LYON • STYLE ÉDITORIAL ET AUTHENTIQUE
-      </div>
+      </h1>
     </div>
   </section>
 
   {/* NEW: Sticky Scrolling Logo */}
   <div class="fixed top-0 left-0 w-full h-[100dvh] z-[26] pointer-events-none hidden md:flex auto-cols-auto justify-center px-[5%] pb-[4vh] items-end">
     <div id="sticky-logo-wrapper" class="w-max origin-bottom will-change-transform">
-      <h1
-        // Removed tracking-widest to bring letters closer together
-        class="text-accent leading-[0.85] font-light pointer-events-auto flex justify-center items-baseline mix-blend-difference drop-shadow-sm select-none"
+      <p
+        // Brand logo, not a heading: the page's h1 carries the "photographe de mariage" wording
+        class="text-accent leading-[0.85] font-light tracking-[-0.01em] pointer-events-auto flex justify-center items-baseline mix-blend-difference drop-shadow-sm select-none"
         style="font-family: 'Times New Roman', Times, serif;"
       >
         <span style="font-size: 12vw;">PHOTO</span>
         {/* Ampersand styled to match text color, italic, and sitting natively on the baseline */}
         <span class="italic px-[0.8vw]" style="font-size: 11vw;">&amp;</span>
         <span style="font-size: 12vw;">DRAGÉE</span>
-      </h1>
+      </p>
     </div>
   </div>
 

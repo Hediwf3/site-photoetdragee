@@ -18,7 +18,8 @@ const {
   noindex = false,
 } = Astro.props;
 
-const fullTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.title}`;
+// Pages pass their own title; the brand is appended once unless already present.
+const fullTitle = /photo (&|et) drag[ée]e/i.test(title) ? title : `${title} | Photo & Dragée`;
 const siteUrl = (Astro.site || Astro.url.origin).toString();
 
 // LocalBusiness structured data — keeps Google / Maps / AI assistants
@@ -40,8 +41,10 @@ const businessSchema = {
     "name": "Hedi",
     "jobTitle": "Photographe de mariage"
   },
+  // Same name, address and phone as the Google Business Profile.
   "address": {
     "@type": "PostalAddress",
+    "streetAddress": "21 rue de Bourgogne",
     "addressLocality": "Vienne",
     "postalCode": "38200",
     "addressRegion": "Auvergne-Rhône-Alpes",
@@ -49,14 +52,17 @@ const businessSchema = {
   },
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": 45.5256,
-    "longitude": 4.8742
+    "latitude": 45.5261625,
+    "longitude": 4.8734564
   },
+  "hasMap": "https://www.google.com/maps?cid=751279420909717594",
   "areaServed": [
     { "@type": "City", "name": "Vienne" },
     { "@type": "City", "name": "Lyon" },
     { "@type": "AdministrativeArea", "name": "Isère" },
     { "@type": "AdministrativeArea", "name": "Rhône" },
+    { "@type": "AdministrativeArea", "name": "Drôme" },
+    { "@type": "AdministrativeArea", "name": "Puy-de-Dôme" },
     { "@type": "AdministrativeArea", "name": "Auvergne-Rhône-Alpes" }
   ],
   "priceRange": "€€",
@@ -81,7 +87,9 @@ const businessSchema = {
     "Séance engagement"
   ],
   "sameAs": [
-    "https://www.instagram.com/photoetdragee/"
+    "https://www.instagram.com/photoetdragee/",
+    "https://www.google.com/maps?cid=751279420909717594",
+    "https://www.mariages.net/photo-mariage/photo-%26-dragee--e263821"
   ]
 };
 ---

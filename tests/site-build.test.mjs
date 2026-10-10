@@ -54,3 +54,31 @@ test('all six reportage headers link directly to the contact page', () => {
     assert.ok(header?.includes('VÉRIFIER MA DATE'), slug);
   }
 });
+
+test('titles carry the brand once and reportages are titled by venue', () => {
+  for (const path of ['', 'projets', 'a-propos', 'contact', 'projets/morgane-franck']) {
+    const title = page(path).match(/<title>([^<]*)<\/title>/)[1];
+    assert.equal((title.match(/Photo (&amp;|et) Drag[ée]e/gi) || []).length, 1, title);
+  }
+  const title = page('projets/morgane-franck').match(/<title>([^<]*)<\/title>/)[1];
+  assert.ok(title.startsWith('Photographe mariage Château de Chapeau Cornu'), title);
+});
+
+test('each reportage describes its venue with structured data and real alt texts', () => {
+  for (const slug of ['assia-jeremy', 'fanny-ben', 'marion-boris', 'morgane-franck', 'simeone-loris', 'lucy-romain']) {
+    const html = page(`projets/${slug}`);
+    assert.ok(html.includes('id="story-title"'), slug);
+    assert.ok(!/alt="[^"]*photo \d+"/.test(html), slug);
+    const graphs = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map(m => JSON.parse(m[1]));
+    const gallery = graphs.flatMap(g => g['@graph'] || []).find(g => g['@type'] === 'ImageGallery');
+    assert.ok(gallery?.contentLocation?.address?.addressLocality, slug);
+  }
+});
+
+test('sitemap lists gallery images and the footer links every venue', () => {
+  assert.ok(readFileSync('dist/sitemap-0.xml', 'utf8').includes('<image:caption>'));
+  const home = page('');
+  for (const slug of ['assia-jeremy', 'fanny-ben', 'marion-boris', 'morgane-franck', 'simeone-loris', 'lucy-romain']) {
+    assert.ok(home.includes(`href="/projets/${slug}/"`), slug);
+  }
+});

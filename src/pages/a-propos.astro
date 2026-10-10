@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { siteConfig } from '../data/siteConfig';
 import { imgAttrs } from '../utils/images';
 
 const description = "Je suis Hedi, photographe de mariage basé à Vienne (Isère, 38200). Reportages sincères et élégants à Vienne, Lyon et en Auvergne-Rhône-Alpes. FAQ : tarifs, réservation, déplacements.";
@@ -27,7 +26,7 @@ const faqSchema = {
 };
 ---
 
-<Layout title={`À Propos — Hedi, photographe de mariage à Vienne | ${siteConfig.title}`} description={description} hideHeader={true} hideLoadingOverlay={true}>
+<Layout title="À propos — Hedi, photographe de mariage à Vienne (Isère)" description={description} hideHeader={true} hideLoadingOverlay={true}>
 
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
@@ -77,7 +76,7 @@ const faqSchema = {
         <div class="w-full lg:w-[49%] flex-shrink-0 relative overflow-hidden min-w-0 aspect-[4/5] lg:aspect-auto" id="hero-img-container">
           <img
             {...imgAttrs("/portfolio-webp/grid_rect6.webp", "(min-width: 1024px) 49vw, 100vw")}
-            alt="Hedi, photographe de mariage à Vienne — Photo & Dragée"
+            alt="Assia et Jérémy enlacés dans un escalier, mariage au Domaine de Dolomieu"
             class="w-full h-full object-cover reveal-up"
             loading="eager"
             fetchpriority="high"
@@ -156,7 +155,7 @@ const faqSchema = {
           <div class="aspect-[3/2] w-full overflow-hidden">
             <img
               {...imgAttrs("/portfolio-webp/grid_rect14.webp?v=2", "(min-width: 1024px) 50vw, 100vw")}
-              alt="Hedi en action — photographe de mariage en Isère et région lyonnaise"
+              alt="Lucy et Romain au Domaine de Blacons, dans la Drôme, en noir et blanc"
               class="w-full h-full object-cover reveal-up"
               loading="lazy"
               decoding="async"
