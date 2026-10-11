@@ -31,15 +31,6 @@ const currentYear = new Date().getFullYear();
     {/* Links */}
     <div class="flex flex-col sm:flex-row gap-12 text-sm font-sans uppercase tracking-widest font-light">
       <div class="flex flex-col gap-4">
-        <span class="opacity-50 text-xs">Mariages photographiés</span>
-        {projects.map((project) => (
-          <a href={`/projets/${project.slug}/`} class="lg:whitespace-nowrap hover:italic transition-all duration-300">
-            {project.venue.name}
-          </a>
-        ))}
-      </div>
-
-      <div class="flex flex-col gap-4">
         <span class="opacity-50 text-xs">Navigation</span>
         {siteConfig.navLinks.map((link) => (
           <a href={link.href} class="hover:italic transition-all duration-300">
@@ -59,10 +50,20 @@ const currentYear = new Date().getFullYear();
         <span class="opacity-50 text-xs">Contact</span>
         <a href="tel:+33652253578" class="hover:italic transition-all duration-300">06 52 25 35 78</a>
         <a href="mailto:photoetdragee@gmail.com" class="normal-case hover:italic transition-all duration-300">photoetdragee@gmail.com</a>
-        <span class="opacity-75">Vienne (38200), Isère</span>
       </div>
     </div>
 
   </div>
+
+  {/* Venues on their own line, so the columns above keep the width the homepage logo animation lands beside */}
+  <nav aria-label="Mariages photographiés" class="w-full max-w-7xl mx-auto mt-12 pt-6 border-t border-accent/10 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-xs font-sans uppercase tracking-widest font-light">
+    <span class="opacity-50">Mariages photographiés</span>
+    {projects.map((project) => (
+      <a href={`/projets/${project.slug}/`} class="opacity-75 hover:opacity-100 hover:italic transition-all duration-300">
+        {project.venue.name}
+      </a>
+    ))}
+    <span class="opacity-50 md:ml-auto">Vienne (38200), Isère</span>
+  </nav>
 
 </footer>
