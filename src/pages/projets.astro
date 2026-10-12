@@ -33,7 +33,7 @@ const description = `Reportages de mariage photographiés par Hedi, Photo & Drag
         {projects.map((project, index) => (
           <li class="group relative cursor-default transition-colors w-full border-b border-accent/20 pb-4 md:pb-6 pt-2">
             {/* The visible list item: Flex layout split into Name and Location */}
-            <a href={`/projets/${project.slug}`} class={`flex flex-col text-accent w-full group-hover:opacity-40 transition-opacity duration-500 gap-1 ${index % 2 !== 0 ? 'items-end text-right' : 'items-start text-left'}`}>
+            <a href={`/projets/${project.slug}/`} class={`flex flex-col text-accent w-full group-hover:opacity-40 transition-opacity duration-500 gap-1 ${index % 2 !== 0 ? 'items-end text-right' : 'items-start text-left'}`}>
               <span class="text-xl sm:text-2xl lg:text-[1.5vw] leading-[1.1] font-serif font-light text-balance z-10 relative">
                 {project.name}
               </span>

@@ -140,7 +140,7 @@ const { navLinks } = siteConfig;
         const href = (link as HTMLAnchorElement).getAttribute('href');
         
         // Handle FAQ anchor explicitly for smooth transition
-        if (href === '/a-propos#faq' && (window as any).lenis) {
+        if (href === '/a-propos/#faq' && (window as any).lenis) {
           e.preventDefault();
           isMenuOpen = false;
           menuText.textContent = 'Menu';
@@ -151,7 +151,7 @@ const { navLinks } = siteConfig;
           
           // Small delay to allow menu to start closing before navigating/scrolling
           setTimeout(() => {
-            if (window.location.pathname === '/a-propos') {
+            if (window.location.pathname.startsWith('/a-propos')) {
               (window as any).lenis.scrollTo('#faq', { offset: -160 });
             } else {
               window.location.href = href;

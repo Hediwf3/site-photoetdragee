@@ -6,9 +6,9 @@ export const siteConfig = {
 
     // Navigation
     navLinks: [
-        { label: "Projets", href: "/projets" },
-        { label: "À Propos", href: "/a-propos" },
-        { label: "FAQ", href: "/a-propos#faq" },
+        { label: "Projets", href: "/projets/" },
+        { label: "À Propos", href: "/a-propos/" },
+        { label: "FAQ", href: "/a-propos/#faq" },
         { label: "Vérifier ma date", href: "/contact/" },
     ],
 
