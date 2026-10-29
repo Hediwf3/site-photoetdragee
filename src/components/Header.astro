@@ -61,7 +61,7 @@ const { navLinks } = siteConfig;
     if (!header) return;
     const isMobile = window.innerWidth < 768;
     // Show header immediately on static un-scrollable pages
-    const isStaticPage = window.location.pathname.includes('/contact') || window.location.pathname.includes('/projets');
+    const isStaticPage = window.location.pathname.includes('/contact') || window.location.pathname.includes('/projets') || window.location.pathname.includes('/photographe-mariage-vienne');
     
     if (window.scrollY > 80 || isMobile || isStaticPage) {
       header.classList.remove('md:opacity-0', 'md:-translate-y-full', 'opacity-0', '-translate-y-full');

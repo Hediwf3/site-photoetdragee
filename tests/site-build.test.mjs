@@ -82,3 +82,18 @@ test('sitemap lists gallery images and the footer links every venue', () => {
     assert.ok(home.includes(`href="/projets/${slug}/"`), slug);
   }
 });
+
+test('the Vienne wedding page is indexable, linked from the homepage and answers local questions', () => {
+  const html = page('photographe-mariage-vienne');
+  assert.ok(html.includes('<h1'));
+  assert.ok(!html.includes('noindex'));
+  assert.ok(html.includes('rel="canonical" href="https://www.photoetdragee.fr/photographe-mariage-vienne/"'));
+  const graph = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)]
+    .flatMap(m => JSON.parse(m[1])['@graph'] || []);
+  assert.ok(graph.find(g => g['@type'] === 'FAQPage')?.mainEntity.length >= 5);
+  for (const slug of ['assia-jeremy', 'fanny-ben', 'marion-boris', 'morgane-franck', 'simeone-loris', 'lucy-romain']) {
+    assert.ok(html.includes(`href="/projets/${slug}/"`), slug);
+  }
+  assert.ok(page('').includes('href="/photographe-mariage-vienne/"'));
+  assert.ok(readFileSync('dist/sitemap-0.xml', 'utf8').includes('/photographe-mariage-vienne/'));
+});
