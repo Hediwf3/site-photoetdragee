@@ -6,7 +6,9 @@ import ResponsivePicture from '../components/ResponsivePicture.astro';
 import AvailabilityLink from '../components/AvailabilityLink.astro';
 
 const title = "Photographe de mariage à Vienne (Isère) & Lyon | Photo & Dragée";
-const description = "Photo & Dragée — Hedi, photographe de mariage à Vienne (38200), Isère. Reportages éditoriaux et authentiques à Vienne, Lyon et en Auvergne-Rhône-Alpes. Formule journée complète 1500 €.";
+// [OPTIM] Le tarif vient de siteConfig.price (source unique) — ne plus l'écrire en dur.
+const { price } = siteConfig;
+const description = `Photo & Dragée — Hedi, photographe de mariage à Vienne (38200), Isère. Reportages éditoriaux et authentiques à Vienne, Lyon et en Auvergne-Rhône-Alpes. Formule journée complète ${price.compact}.`;
 
 // Exact layout matching the reference site (estudiomanzanero.com)
 // Using exact computed sizes and positions from the browser
@@ -276,7 +278,7 @@ const reviews = [
       <p class="text-[3vw] md:text-[1.1vw] font-serif font-light opacity-80 text-balance leading-relaxed">
         J’accorde une importance capitale à votre tranquillité d’esprit. Pour vous garantir une prestation haut de gamme sans surprise de dernière minute, je vous propose une formule unique qui couvre l’intégralité de votre journée de mariage.
       </p>
-      <div class="font-serif text-[12vw] md:text-[4.5vw] font-light leading-none my-4 md:my-6 opacity-90 tracking-widest">— 1500 € —</div>
+      <div class="font-serif text-[12vw] md:text-[4.5vw] font-light leading-none my-4 md:my-6 opacity-90 tracking-widest">— {price.compact} —</div>
       <p class="text-[3vw] md:text-[1.1vw] font-serif font-light opacity-80 text-balance leading-relaxed">
         Je me tiens à vos côtés des premiers préparatifs matinaux aux heures plus avancées de la soirée, de l’intimité des futurs mariés en train d’enfiler leur tenue à l’effervescence de la découpe du gâteau.
       </p>
@@ -336,7 +338,7 @@ const reviews = [
         <p class="font-serif font-light text-lg text-balance leading-snug">
           Une formule unique qui couvre l’intégralité de votre journée de mariage, des préparatifs à la soirée.
         </p>
-        <div class="font-serif text-[12vw] font-light leading-none my-5 opacity-90 tracking-widest">— 1500 € —</div>
+        <div class="font-serif text-[12vw] font-light leading-none my-5 opacity-90 tracking-widest">— {price.compact} —</div>
         <div role="region" aria-label="Avis des mariés" aria-roledescription="carrousel" class="js-reviews mt-4">
           <div class="js-reviews-track grid">
             {reviews.map((review, i) => (
@@ -455,89 +457,140 @@ const reviews = [
 </style>
 
 <script>
-  import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import SplitType from 'split-type';
+  // ═══════════════════════════════════════════════════════════════════════
+  // [OPTIM] BIBLIOTHÈQUES D'ANIMATION CHARGÉES SEULEMENT QUAND IL LE FAUT
+  //
+  // Avant : `import gsap`, `import ScrollTrigger`, `import SplitType` en haut du
+  // script. Tous les visiteurs téléchargeaient et exécutaient donc ~130 Ko de
+  // JavaScript dès l'ouverture de la page, y compris sur téléphone où :
+  //   - ScrollTrigger ne sert à rien (il n'anime que la version ordinateur) ;
+  //   - gsap + SplitType ne servent qu'au carrousel d'avis, placé après
+  //     32 photos, que beaucoup de visiteurs n'atteignent jamais.
+  //
+  // Maintenant :
+  //   - ordinateur : rien ne change, les trois sont demandés tout de suite ;
+  //   - téléphone  : rien n'est chargé au départ. gsap + SplitType arrivent
+  //     quand le visiteur approche du bloc d'avis ; ScrollTrigger jamais.
+  // Le téléphone garde ainsi son réseau et son processeur pour les photos.
+  // Les animations elles-mêmes (durées, courbes, décalages) sont inchangées.
+  // ═══════════════════════════════════════════════════════════════════════
+  import type GsapType from 'gsap';
+  import type SplitTypeClass from 'split-type';
 
-  gsap.registerPlugin(ScrollTrigger);
+  type AnimLibs = { gsap: typeof GsapType; SplitType: typeof SplitTypeClass };
 
-  // Simple Vanilla JS Parallax Effect (Scroll & Mouse)
-  const parallaxBoxes = document.querySelectorAll<HTMLElement>('.parallax-box');
-  const mouseParallaxBoxes = document.querySelectorAll<HTMLElement>('.mouse-parallax-box');
+  // `animLibs` reste vide tant que le téléchargement n'est pas terminé.
+  let animLibs: AnimLibs | null = null;
+  let animLibsPromise: Promise<AnimLibs> | null = null;
+  // Peut être appelée plusieurs fois : le téléchargement n'a lieu qu'une fois.
+  const loadAnimLibs = () => (animLibsPromise ??= Promise.all([import('gsap'), import('split-type')])
+    .then(([gsapModule, splitModule]) => (animLibs = { gsap: gsapModule.default, SplitType: splitModule.default })));
 
-  // Mouse tracking state
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
+  const isDesktop = window.innerWidth >= 768;
 
-  // Track window center
-  let windowWidth = window.innerWidth;
-  let windowHeight = window.innerHeight;
+  // ───────────────────────────────────────────────────────────────────────
+  // 1. PARALLAXE (photos flottantes du haut + grand logo) — ordinateur seulement
+  // ───────────────────────────────────────────────────────────────────────
+  // [OPTIM] Cette fonction tourne 60 fois par seconde tant que la page est
+  // ouverte. Avant, à CHAQUE passage, même quand rien ne bougeait, elle :
+  //   - recherchait le pied de page et le logo dans le document ;
+  //   - relisait les réglages data-speed / data-movement des 10 photos ;
+  //   - mesurait la hauteur totale de la page et celle du pied de page, ce qui
+  //     oblige le navigateur à recalculer toute la mise en page ;
+  //   - réécrivait la position des 10 photos et du logo.
+  // Maintenant :
+  //   - les éléments et leurs réglages sont lus une seule fois, au démarrage ;
+  //   - les mesures ne sont refaites que si la page change de taille ;
+  //   - si ni le défilement ni la souris n'ont bougé, la fonction s'arrête
+  //     immédiatement (page au repos = presque aucun travail).
+  // Les formules de position sont exactement les mêmes : le rendu est identique.
+  function initParallax() {
+    const scrollBoxes = Array.from(document.querySelectorAll<HTMLElement>('.parallax-box'), (el) => ({
+      el,
+      speed: parseFloat(el.dataset.speed || '0'),
+    }));
+    const mouseBoxes = Array.from(document.querySelectorAll<HTMLElement>('.mouse-parallax-box'), (el) => ({
+      el,
+      movement: parseFloat(el.dataset.movement || '10'),
+    }));
+    const stickyLogo = document.getElementById('sticky-logo-wrapper');
+    const footerTarget = document.getElementById('footer-logo-target');
+    const footerNode = document.querySelector<HTMLElement>('footer');
 
-  window.addEventListener('resize', () => {
-    windowWidth = window.innerWidth;
-    windowHeight = window.innerHeight;
-  });
+    // Mouse tracking state (normalized between -1 and 1)
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
 
-  window.addEventListener('mousemove', (e) => {
-    // Normalize mouse position between -1 and 1
-    targetX = (e.clientX - windowWidth / 2) / (windowWidth / 2);
-    targetY = (e.clientY - windowHeight / 2) / (windowHeight / 2);
-  });
+    // Mesures de mise en page, gardées en mémoire entre deux images
+    let windowWidth = window.innerWidth;
+    let windowHeight = window.innerHeight;
+    let maxScroll = 0;        // défilement maximum possible
+    let triggerDistance = 0;  // distance du bas à partir de laquelle le logo part vers le pied de page
+    let logoWidth = 0;        // largeur naturelle du grand logo
+    let layoutDirty = true;   // true = les mesures sont à refaire
+    let lastScrollY = -1;
 
-  // Linear interpolation for smooth trailing
-  const lerp = (start: number, end: number, factor: number) => {
-    return start + (end - start) * factor;
-  };
+    const measureLayout = () => {
+      windowWidth = window.innerWidth;
+      windowHeight = window.innerHeight;
+      maxScroll = document.body.scrollHeight - windowHeight;
+      // We wait until the footer is physically entering the screen (last 5% of viewport height)
+      // so it never triggers while the user is still reading the bottom of the grid.
+      triggerDistance = footerNode ? footerNode.offsetHeight + windowHeight * 0.05 : windowHeight * 0.15;
+      logoWidth = stickyLogo ? stickyLogo.offsetWidth : 0;
+      layoutDirty = false;
+    };
+    const markLayoutDirty = () => { layoutDirty = true; };
+    window.addEventListener('resize', markLayoutDirty);
+    // Prévient aussi quand la hauteur de la page change (polices chargées, etc.)
+    new ResizeObserver(markLayoutDirty).observe(document.body);
 
-  const stickyLogo = document.getElementById('sticky-logo-wrapper');
-  const isMobileViewport = window.innerWidth < 768;
-
-  const updateParallax = () => {
-    // 1. SCROLL PARALLAX (Outer box translates Y)
-    const scrollY = window.scrollY;
-
-    parallaxBoxes.forEach((box) => {
-      const speed = parseFloat(box.getAttribute('data-speed') || '0');
-      const yOffset = Math.round(-(scrollY * speed));
-      box.style.transform = `translate(0px, ${yOffset}px)`;
+    window.addEventListener('mousemove', (e) => {
+      // Normalize mouse position between -1 and 1
+      targetX = (e.clientX - windowWidth / 2) / (windowWidth / 2);
+      targetY = (e.clientY - windowHeight / 2) / (windowHeight / 2);
     });
 
-    // 2. MOUSE PARALLAX (Inner box translates X & Y smoothly)
-    // Lerp mouse coordinates towards target
-    mouseX = lerp(mouseX, targetX, 0.05); // The lower the factor, the smoother/lazier the trail
-    mouseY = lerp(mouseY, targetY, 0.05);
+    // Linear interpolation for smooth trailing
+    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
-    mouseParallaxBoxes.forEach((innerBox) => {
-      const movement = parseFloat(innerBox.getAttribute('data-movement') || '10');
-      // Calculate pixel offset (inverses direction so it feels like floating)
-      const xOffset = Math.round(-(mouseX * movement));
-      const yOffset = Math.round(-(mouseY * movement));
+    const updateParallax = () => {
+      requestAnimationFrame(updateParallax);
 
-      innerBox.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-    });
+      const scrollY = window.scrollY;
+      // La souris est « arrivée » quand l'écart restant est invisible (< 0,01 px)
+      const mouseSettled = Math.abs(targetX - mouseX) < 0.0005 && Math.abs(targetY - mouseY) < 0.0005;
+      // [OPTIM] Rien n'a bougé depuis la dernière image : on ne fait rien.
+      if (scrollY === lastScrollY && mouseSettled && !layoutDirty) return;
+      lastScrollY = scrollY;
+      if (layoutDirty) measureLayout();
 
-    // 3. STICKY LOGO SCALING & FOOTER TRANSITION
-    const targetPlaceholder = document.getElementById('footer-logo-target');
+      // 1. SCROLL PARALLAX (Outer box translates Y)
+      for (const { el, speed } of scrollBoxes) {
+        el.style.transform = `translate(0px, ${Math.round(-(scrollY * speed))}px)`;
+      }
 
-    if (stickyLogo) {
-      let rawScale = 1 - (scrollY / 800);
-      let scale = Math.max(0.12, Math.min(1, rawScale));
+      // 2. MOUSE PARALLAX (Inner box translates X & Y smoothly)
+      // Lerp mouse coordinates towards target — the lower the factor, the smoother/lazier the trail
+      mouseX = lerp(mouseX, targetX, 0.05);
+      mouseY = lerp(mouseY, targetY, 0.05);
+      for (const { el, movement } of mouseBoxes) {
+        // Pixel offset (inverses direction so it feels like floating)
+        el.style.transform = `translate(${Math.round(-(mouseX * movement))}px, ${Math.round(-(mouseY * movement))}px)`;
+      }
 
-      let translateX = 0;
-      let translateY = 0;
+      // 3. STICKY LOGO SCALING & FOOTER TRANSITION
+      if (stickyLogo) {
+        let scale = Math.max(0.12, Math.min(1, 1 - scrollY / 800));
+        let translateX = 0;
+        let translateY = 0;
 
-      if (targetPlaceholder) {
-         const docHeight = document.body.scrollHeight;
-         const maxScroll = docHeight - windowHeight;
-         // We wait until the footer is physically entering the screen (last 5% of viewport height)
-         // so it never triggers while the user is still reading the bottom of the grid.
-         const footerNode = document.querySelector('footer');
-         const triggerDistance = footerNode ? footerNode.offsetHeight + (windowHeight * 0.05) : windowHeight * 0.15;
-         const distanceToBottom = maxScroll - scrollY;
+        if (footerTarget) {
+          const distanceToBottom = maxScroll - scrollY;
 
-         if (distanceToBottom < triggerDistance) {
+          if (distanceToBottom < triggerDistance) {
             // progress goes from 0 to 1 as we reach the bottom
             const progress = 1 - Math.max(0, distanceToBottom / triggerDistance);
 
@@ -549,15 +602,14 @@ const reviews = [
             scale = scale + ((targetScale - scale) * ease);
 
             // Calculate spatial landing based on the actual invisible placeholder in the footer
-            const placeRect = targetPlaceholder.getBoundingClientRect();
+            const placeRect = footerTarget.getBoundingClientRect();
 
             // Natural center of the original huge Logo on screen
             const screenCenterX = windowWidth / 2;
             const naturalBottom = windowHeight * 0.96; // 100vh - 4vh padding (pb-[4vh])
 
             // Find current unscaled centered width
-            const logoNaturalWidth = stickyLogo.offsetWidth;
-            const scaledHalfWidth = (logoNaturalWidth * scale) / 2;
+            const scaledHalfWidth = (logoWidth * scale) / 2;
             const currentVisibleLeft = screenCenterX - scaledHalfWidth;
 
             const finalTranslateX = placeRect.left - currentVisibleLeft;
@@ -566,23 +618,26 @@ const reviews = [
 
             translateX = finalTranslateX * ease;
             translateY = finalTranslateY * ease;
-         }
+          }
+        }
+
+        stickyLogo.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
       }
+    };
 
-      stickyLogo.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-    }
-
-    requestAnimationFrame(updateParallax);
-  };
-
-  // Kick off the animation loop — desktop only (all parallax targets are hidden
-  // on mobile, so the loop would only burn battery / main-thread time there)
-  if (!isMobileViewport) {
     requestAnimationFrame(updateParallax);
   }
 
-  // GSAP Heading Animation — desktop only (section is hidden on mobile)
-  if (!isMobileViewport) {
+  // ───────────────────────────────────────────────────────────────────────
+  // 2. ANIMATION DU GRAND TITRE — ordinateur seulement (section cachée sur mobile)
+  // ───────────────────────────────────────────────────────────────────────
+  async function initHeadingAnimation() {
+    const [{ gsap, SplitType }, { ScrollTrigger }] = await Promise.all([
+      loadAnimLibs(),
+      import('gsap/ScrollTrigger'),
+    ]);
+    gsap.registerPlugin(ScrollTrigger);
+
     const splitTitle = new SplitType('.c-heading__title', { types: 'lines,words' });
 
     // Add overflow hidden to lines to create clipping mask effect
@@ -632,6 +687,16 @@ const reviews = [
     });
   }
 
+  // All parallax targets and the heading are hidden on mobile, so running them
+  // there would only burn battery / main-thread time.
+  if (isDesktop) {
+    initParallax();
+    void initHeadingAnimation();
+  }
+
+  // ───────────────────────────────────────────────────────────────────────
+  // 3. GALERIE MOBILE — apparition des photos au défilement (aucune bibliothèque)
+  // ───────────────────────────────────────────────────────────────────────
   // Keep all original photographs, without cloning the feed or its listeners.
   // Progressive enhancement: the gallery remains visible if JavaScript fails.
   const mobileGrid = document.querySelector('.js-mobile-grid');
@@ -648,7 +713,9 @@ const reviews = [
     mobileGrid.classList.add('is-enhanced');
   }
 
-  // === Sliding Reviews Carousel — c-heading-style line-by-line wave reveal ===
+  // ───────────────────────────────────────────────────────────────────────
+  // 4. CARROUSEL D'AVIS — c-heading-style line-by-line wave reveal
+  // ───────────────────────────────────────────────────────────────────────
   // The page has two carousels (desktop on-grid box + mobile inline). Same logic for each.
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   document.querySelectorAll<HTMLElement>('.js-reviews').forEach((section) => {
@@ -659,12 +726,26 @@ const reviews = [
     const INTERVAL = 8500;
     let current = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
-    let split: SplitType | null = null;
-    let animation: gsap.core.Timeline | null = null;
+    let split: InstanceType<typeof SplitTypeClass> | null = null;
+    let animation: ReturnType<typeof GsapType.timeline> | null = null;
     let visible = false;
     let paused = motionPreference.matches;
     let hovering = false;
     const pauseButton = section.querySelector<HTMLButtonElement>('.review-pause');
+
+    // [OPTIM] On commence à télécharger gsap + SplitType quand le bloc d'avis
+    // est à environ deux écrans du visiteur : elles sont prêtes à son arrivée.
+    // (Le carrousel caché — version mobile sur ordinateur, et inversement — ne
+    //  déclenche jamais rien. Idem si le visiteur a désactivé les animations.)
+    if (!motionPreference.matches) {
+      const preloadObserver = new IntersectionObserver((entries, observer) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          void loadAnimLibs();
+          observer.disconnect();
+        }
+      }, { rootMargin: '1500px 0px' });
+      preloadObserver.observe(section);
+    }
 
     const showReview = (index: number, animate = true) => {
       animation?.revert();
@@ -683,6 +764,16 @@ const reviews = [
       const slide = slides[index];
       const quote = slide.querySelector<HTMLElement>('.js-review-quote');
       if (motionPreference.matches || !animate || !quote) return;
+
+      // [OPTIM] Si les bibliothèques ne sont pas encore arrivées (connexion très
+      // lente), l'avis s'affiche simplement, sans animation, plutôt que
+      // d'apparaître puis de disparaître pour se rejouer. Le suivant sera animé.
+      if (!animLibs) {
+        void loadAnimLibs();
+        return;
+      }
+      const { gsap, SplitType } = animLibs;
+
       split = new SplitType(quote, { types: 'lines,words' });
 
       // Same clip-mask trick the hero c-heading uses, applied per line

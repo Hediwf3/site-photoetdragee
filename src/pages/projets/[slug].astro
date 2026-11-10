@@ -32,6 +32,28 @@ const absolute = (src: string) => new URL(encodeURI(decodeURIComponent(src)), As
 const hero = project.heroImage ? imgAttrs(project.heroImage) : undefined;
 const ogImage = hero?.srcset?.includes('-1600w.webp') ? hero.src.replace(/\.webp$/, '-1600w.webp') : hero?.src;
 
+// [OPTIM] GALERIE : chaque photo réserve sa VRAIE place avant d'être chargée.
+// Les photos après les 2 premières ne se téléchargent qu'à l'approche (lazy
+// loading). En attendant, elles affichaient une image vide CARRÉE (1×1) : une
+// photo verticale occupait donc 747 px de large au lieu de 498, une horizontale
+// 747 au lieu de 1120 (mesuré sur un écran 1440×900). À chaque chargement, tout
+// ce qui suivait se décalait de 250 à 370 px pendant le défilement, et la
+// longueur totale du défilement horizontal changeait en cours de route.
+// L'image vide a maintenant exactement les proportions de la photo (lues dans
+// image-manifest.json) : plus aucun décalage, sur ordinateur comme sur mobile.
+// Au passage, imgAttrs() est calculé une seule fois par photo au lieu de quatre.
+const gallerySizes = "(min-width: 768px) 65vw, 92vw";
+const galleryImages = project.gallery.map((img, i) => {
+  const attrs = imgAttrs(img, gallerySizes);
+  // Sans dimensions connues (photo absente du manifeste), on garde l'ancien carré.
+  const ratio = attrs.width && attrs.height ? `${attrs.width} ${attrs.height}` : '1 1';
+  return {
+    attrs,
+    alt: project.alts[i],
+    placeholder: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${ratio}'%3E%3C/svg%3E`,
+  };
+});
+
 const gallerySchema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -153,28 +175,28 @@ const gallerySchema = {
           {/* 2. Gallery Scatter */}
           <div class="sc-134ba46d-0 QZqPL flex flex-col md:flex-row h-auto md:h-[100dvh] shrink-0 items-center w-full md:w-auto">
             <div class="images-content flex flex-col md:flex-row items-center h-auto md:h-[100dvh] w-full px-6 md:px-0">
-              {project.gallery.map((img, i) => (
+              {galleryImages.map(({ attrs, alt, placeholder }, i) => (
                 <div class="image-wrapper gallery-item-wrapper for-desktop-anim for-mobile-anim shrink-0 relative z-10">
                   <div class="image-inner-wrapper js-project-anim w-auto h-full relative overflow-hidden flex items-center justify-center">
                     {i < 2 ? (
                       <img
                         draggable="false"
-                        alt={project.alts[i]}
+                        alt={alt}
                         loading="eager"
                         decoding="async"
-                        {...imgAttrs(img, "(min-width: 768px) 65vw, 92vw")}
+                        {...attrs}
                         class="w-auto h-full object-cover block gallery-img"
                       />
                     ) : (
                       <img
                         draggable="false"
-                        alt={project.alts[i]}
-                        data-src={imgAttrs(img).src}
-                        data-srcset={imgAttrs(img).srcset}
-                        sizes="(min-width: 768px) 65vw, 92vw"
-                        width={imgAttrs(img).width}
-                        height={imgAttrs(img).height}
-                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E"
+                        alt={alt}
+                        data-src={attrs.src}
+                        data-srcset={attrs.srcset}
+                        sizes={gallerySizes}
+                        width={attrs.width}
+                        height={attrs.height}
+                        src={placeholder}
                         class="w-auto h-full object-cover block gallery-img gallery-lazy"
                       />
                     )}
@@ -664,8 +686,10 @@ const gallerySchema = {
               delete img.dataset.src;
               img.classList.remove('gallery-lazy');
               lazyObserver.unobserve(img);
-              // Refresh GSAP after image loads to recalculate widths
-              img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+              // [OPTIM] Plus de ScrollTrigger.refresh() à chaque photo chargée :
+              // la place est déjà réservée aux bonnes proportions, donc rien ne
+              // bouge. Si la taille change quand même, le ResizeObserver
+              // ci-dessous s'en charge.
             }
           }
         });
@@ -679,8 +703,20 @@ const gallerySchema = {
       lazyImages.forEach(img => lazyObserver.observe(img));
     }
 
-    // Automatically refresh GSAP when images load and change the container's width
+    // Automatically refresh GSAP when the container's size really changes
+    // (window resize, rotation, a photo whose dimensions were unknown).
+    // [OPTIM] ScrollTrigger.refresh() recalcule toute la page : c'est lourd, et
+    // en plein défilement ça provoque un à-coup. Avant, il partait à chaque
+    // photo chargée (30 à 40 fois par galerie). Une photo qui arrive ne change
+    // plus la taille que d'une fraction de pixel (arrondi) : on ne recalcule
+    // donc que si la taille a bougé d'au moins 2 px depuis le dernier calcul.
+    let lastWidth = -Infinity;
+    let lastHeight = -Infinity;
     const resizeObserver = new ResizeObserver(() => {
+      const { width, height } = scrollContent.getBoundingClientRect();
+      if (Math.abs(width - lastWidth) < 2 && Math.abs(height - lastHeight) < 2) return;
+      lastWidth = width;
+      lastHeight = height;
       optimizeTitleFit();
       ScrollTrigger.refresh();
     });

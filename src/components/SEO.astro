@@ -1,6 +1,20 @@
 ---
 import { siteConfig } from '../data/siteConfig';
 import fontPreloads from '../data/font-preloads.json';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+// [OPTIM] Déclarations des polices écrites directement dans la page.
+// Avant : <link href="/fonts/main.css"> = un fichier de 2,5 Ko que le navigateur
+// devait télécharger AVANT de pouvoir afficher quoi que ce soit (il « bloque le
+// rendu »), et qu'il redemandait au serveur à chaque page (aucun cache dessus).
+// Maintenant : son contenu est lu ici pendant le build et collé dans le <head>.
+// Un aller-retour réseau en moins avant le premier affichage, surtout sensible
+// en 4G. Le fichier reste généré par scripts/vendor-fonts.mjs : rien à changer
+// dans la façon de gérer les polices.
+const mainFontsCss = readFileSync(join(process.cwd(), 'public/fonts/main.css'), 'utf8')
+  .replace(/\/\*[\s\S]*?\*\//g, '') // retire les commentaires
+  .replace(/\s*\n\s*/g, '');        // et les retours à la ligne
 
 export interface Props {
   title?: string;
@@ -31,7 +45,8 @@ const businessSchema = {
   "@id": `${siteUrl}#business`,
   "name": "Photo & Dragée — Photographe de mariage",
   "alternateName": "Photo et dragée",
-  "description": "Photographe de mariage basé à Vienne (Isère, 38200), intervenant à Vienne, Lyon et dans toute la région Auvergne-Rhône-Alpes. Reportages de mariage au style éditorial et authentique, formule journée complète à 1500 €.",
+  // [OPTIM] Le tarif vient de siteConfig.price (source unique) — ne plus l'écrire en dur.
+  "description": `Photographe de mariage basé à Vienne (Isère, 38200), intervenant à Vienne, Lyon et dans toute la région Auvergne-Rhône-Alpes. Reportages de mariage au style éditorial et authentique, formule journée complète à ${siteConfig.price.compact}.`,
   "url": siteUrl,
   "image": new URL(image, Astro.url).toString(),
   "telephone": "+33652253578",
@@ -70,7 +85,7 @@ const businessSchema = {
     "@type": "Offer",
     "name": "Reportage photo de mariage — journée complète",
     "description": "Couverture intégrale de la journée de mariage, des préparatifs à la soirée : galerie en ligne retouchée, frais de déplacement, clé USB, 50 tirages en coffret premium et séance engagement offerte.",
-    "price": "1500",
+    "price": String(siteConfig.price.amount),
     "priceCurrency": "EUR"
   },
   "review": {
@@ -102,7 +117,8 @@ const businessSchema = {
 
 <!-- Same typography, hosted locally; Bodoni is only used on the About page. -->
 {fontPreloads.map(href => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
-<link href="/fonts/main.css" rel="stylesheet" />
+{/* [OPTIM] polices principales intégrées à la page (voir l'explication en haut du fichier) */}
+<style is:inline set:html={mainFontsCss}></style>
 {Astro.url.pathname.startsWith('/a-propos') && <link href="/fonts/editorial.css" rel="stylesheet" />}
 
 <!-- Canonical URL -->

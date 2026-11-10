@@ -38,3 +38,19 @@ les nouvelles images sont servies en pleine résolution.
 
 Note : les attributs HTML `pattern` dans les fichiers .astro doivent être écrits en
 expression JS (`pattern={"\\d{2}"}`) — Astro supprime les antislashs des attributs littéraux.
+
+## Tarif (source unique)
+
+Le prix de la formule se change à UN seul endroit : `PRICE_AMOUNT` dans `src/data/siteConfig.ts`.
+Les pages, les descriptions et les données structurées lisent `siteConfig.price` — ne jamais
+réécrire le montant en dur. Seul `public/llms.txt` est à corriger à la main.
+
+## Tests
+
+```
+npm run build
+npm test
+```
+
+`npm test` relit le site construit (`dist/`) : il faut donc lancer `npm run build` avant.
+Le test « the price is the same everywhere » échoue si un ancien tarif traîne quelque part.

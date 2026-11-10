@@ -97,3 +97,37 @@ test('the Vienne wedding page is indexable, linked from the homepage and answers
   assert.ok(page('').includes('href="/photographe-mariage-vienne/"'));
   assert.ok(readFileSync('dist/sitemap-0.xml', 'utf8').includes('/photographe-mariage-vienne/'));
 });
+
+// [OPTIM] Garde-fou tarif. Le passage de 1600 € à 1500 € avait laissé l'ancien
+// prix sur la page Vienne, dans la FAQ « À propos » et dans llms.txt, parce qu'il
+// y était écrit « 1 600 € » (avec une espace) et que la recherche « 1600 » ne le
+// trouvait pas. Ce test lit le prix officiel dans les données structurées de
+// l'accueil, puis vérifie que TOUT montant en euros affiché sur le site, dans
+// les données lues par Google et dans llms.txt est bien le même.
+test('the price is the same everywhere: pages, structured data and llms.txt', () => {
+  const offer = [...page('').matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)]
+    .map(m => JSON.parse(m[1])).find(g => g.makesOffer)?.makesOffer;
+  assert.match(offer?.price ?? '', /^\d{4,}$/);
+
+  // "1500 €", "1 500 €", avec espace normale, insécable ou fine insécable
+  const amounts = /(\d{1,3}(?:[ \u00A0\u202F]?\d{3})+)[ \u00A0\u202F]?€/g;
+  const check = (name, content) => {
+    for (const [found, digits] of content.matchAll(amounts)) {
+      assert.equal(digits.replace(/\D/g, ''), offer.price, `${name} affiche « ${found} »`);
+    }
+    for (const [, value] of content.matchAll(/"price":"(\d+)"/g)) {
+      assert.equal(value, offer.price, `${name} : données structurées`);
+    }
+  };
+
+  const paths = ['', 'a-propos', 'contact', 'merci', 'projets', 'photographe-mariage-vienne',
+    ...['assia-jeremy', 'fanny-ben', 'marion-boris', 'morgane-franck', 'simeone-loris', 'lucy-romain'].map(s => `projets/${s}`)];
+  for (const path of paths) check(`/${path}`, page(path));
+
+  const llms = readFileSync('dist/llms.txt', 'utf8');
+  check('llms.txt', llms);
+  // Les pages qui annoncent le tarif doivent toujours l'annoncer.
+  for (const [name, content] of [['/', page('')], ['/a-propos', page('a-propos')], ['/photographe-mariage-vienne', page('photographe-mariage-vienne')], ['llms.txt', llms]]) {
+    assert.ok([...content.matchAll(amounts)].length > 0, `${name} n'affiche plus le tarif`);
+  }
+});

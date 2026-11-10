@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "test": "node --test tests/site-build.test.mjs tests/contact-date.test.mjs",
     "astro": "astro",
     "images": "node generate-responsive.mjs",
     "indexnow": "node scripts/indexnow.mjs"

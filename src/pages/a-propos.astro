@@ -1,18 +1,43 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { imgAttrs } from '../utils/images';
+import { siteConfig } from '../data/siteConfig';
 
 const description = "Je suis Hedi, photographe de mariage basé à Vienne (Isère, 38200). Reportages sincères et élégants à Vienne, Lyon et en Auvergne-Rhône-Alpes. FAQ : tarifs, réservation, déplacements.";
 
-const faqItems = [
-  { q: "Quel est votre style photographique ?", a: "Mon style entremêle esthétique intemporelle et moments d'authenticité captés sur le vif. Je fais rimer convivialité avec professionnalisme pour accompagner les jeunes mariés avec bonne humeur et les mettre dans les meilleures conditions pour être à l'aise face à l'objectif." },
+// [OPTIM] FAQ : UNE SEULE LISTE pour la page ET pour Google.
+// Avant, les 8 questions étaient écrites deux fois (une liste ici pour Google,
+// une autre plus bas pour l'affichage) et la première une troisième fois en HTML.
+// Il fallait donc corriger chaque texte à plusieurs endroits : c'est comme ça que
+// l'ancien tarif était resté affiché ici. Maintenant :
+//   q     = la question
+//   a     = la réponse affichée sur la page (textes inchangés)
+//   short = (facultatif) version courte envoyée à Google dans les données
+//           structurées ; sans `short`, Google reçoit la réponse `a`.
+// Le tarif vient de siteConfig.price (source unique).
+const { price } = siteConfig;
+
+const faqItems: { q: string; a: string; short?: string }[] = [
+  { q: "Quel est votre style photographique ?", a: "Mon style entremêle esthétique intemporelle et moments d’authenticité captés sur le vif. Je fais rimer convivialité avec professionnalisme pour accompagner les jeunes mariés avec bonne humeur et les mettre dans les meilleures conditions pour être à l’aise face à l’objectif." },
   { q: "Combien de temps à l'avance faut-il réserver ?", a: "J'accepte un nombre limité de mariages chaque année afin d'offrir à chaque couple l'attention qu'il mérite. Pour la haute saison, je recommande de réserver 12 mois à l'avance." },
   { q: "Vous déplacez-vous pour les mariages ?", a: "Photographe de mariage à Vienne, mon terrain de jeu principal est l'Isère et la région lyonnaise. Je suis également amené à me déplacer dans toute la région Auvergne-Rhône-Alpes." },
   { q: "Comment se déroule la réservation ?", a: "Après un premier contact par mail ou téléphone, je vous propose de nous rencontrer pour discuter plus avant de vos envies et de vos besoins le jour de votre mariage. Lorsque vous souhaitez réserver votre date de façon définitive, je vous invite à me retourner un contrat signé ainsi qu'à verser un acompte de 30%." },
-  { q: "Quels sont vos tarifs ?", a: "Je propose une formule unique à 1 600 € pour la journée entière. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l'envoi d'une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage." },
+  {
+    q: "Quels sont vos tarifs ?",
+    a: `Je propose une formule unique à ${price.text} pour la journée entière, car je ne conçois pas de vous accompagner à moitié. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l’envoi d’une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage. Quelques jours après les festivités, je m’engage également à vous transmettre un échantillon des plus belles photos de votre grand jour. J’inclus généralement un panachage de portraits, de photos en noir et blanc et de clichés naturels que vous pouvez découvrir à deux ou en famille.`,
+    short: `Je propose une formule unique à ${price.text} pour la journée entière. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l'envoi d'une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage.`,
+  },
   { q: "Serez-vous personnellement notre photographe ?", a: "Oui. Je photographie personnellement chaque mariage que je réserve." },
-  { q: "Proposez-vous des séances engagement ?", a: "Oui, j'inclus dans chacun de mes forfaits un shooting photo en couple gratuit en amont de votre union, à la date de votre choix. Cette séance d'engagement nous permet d'apprendre à nous connaître pour que vous soyez en confiance le jour J." },
-  { q: "Nos photos seront-elles publiées ?", a: "Les images ne seront publiées que sur mon site ou sur mon Instagram. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible." }
+  {
+    q: "Proposez-vous des séances engagement ?",
+    a: "À mes yeux, une bonne ambiance est une des clés de la réussite d’un reportage photo de mariage. C’est dans cette optique qu’il me semble important de nous rencontrer avant la date du mariage. En apprenant à me connaître en amont, il devient plus aisé de vous sentir en confiance le jour J. De mon côté, je peux mieux m’adapter à vos envies et apporter des réponses à toutes vos interrogations. Pour cette raison, j’inclus dans chacun de mes forfaits un shooting photo en couple en amont de votre union. Cette séance d’engagement gratuite a lieu à la date de votre choix.",
+    short: "Oui, j'inclus dans chacun de mes forfaits un shooting photo en couple gratuit en amont de votre union, à la date de votre choix. Cette séance d'engagement nous permet d'apprendre à nous connaître pour que vous soyez en confiance le jour J.",
+  },
+  {
+    q: "Nos photos seront-elles publiées ?",
+    a: "Les images ne seront publiées que sur mon site ou sur mon Instagram, comme les mariages que vous avez pu y découvrir. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible.",
+    short: "Les images ne seront publiées que sur mon site ou sur mon Instagram. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible.",
+  },
 ];
 
 const faqSchema = {
@@ -21,7 +46,7 @@ const faqSchema = {
   "mainEntity": faqItems.map(item => ({
     "@type": "Question",
     "name": item.q,
-    "acceptedAnswer": { "@type": "Answer", "text": item.a }
+    "acceptedAnswer": { "@type": "Answer", "text": item.short ?? item.a }
   }))
 };
 ---
@@ -179,37 +204,12 @@ const faqSchema = {
       {/* FAQ Items */}
       <div class="faq-list w-full border-t border-accent/20">
 
-        {/* DIY FAQ Items Logic as before... */}
-        {/* FAQ 01 */}
-        <div class="faq-item border-b border-accent/20 cursor-pointer group" data-faq>
-          <div class="faq-question flex items-center py-6 lg:py-10 gap-6 lg:gap-10">
-            <span class="font-sans font-light text-[clamp(20px,1.66vw,32px)] opacity-60 flex-shrink-0 w-8 lg:w-16">01</span>
-            <span class="font-serif font-normal text-[clamp(32px,3.33vw,64px)] leading-[1.4] flex-1 group-hover:opacity-70 transition-opacity">Quel est votre style photographique ?</span>
-            <span class="faq-icon font-sans font-light text-[clamp(24px,1.66vw,32px)] opacity-60 flex-shrink-0 transition-transform duration-300 origin-center">+</span>
-          </div>
-          <div class="faq-answer overflow-hidden max-h-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] opacity-0">
-            <div class="pb-6 lg:pb-10 pl-14 lg:pl-[104px] pr-8 lg:pr-16 max-w-[80%]">
-              <p class="font-sans font-light text-[clamp(18px,1.66vw,32px)] opacity-80 leading-[1.5]">
-                Mon style entremêle esthétique intemporelle et moments d’authenticité captés sur le vif. Je fais rimer convivialité avec professionnalisme pour accompagner les jeunes mariés avec bonne humeur et les mettre dans les meilleures conditions pour être à l’aise face à l’objectif.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ... (Other FAQ items kept exactly as before but with opacity-0 initially) */}
-        {/* Simplified for brevity while keeping the V2 improvements */}
-        {[
-          { q: "Combien de temps à l'avance faut-il réserver ?", a: "J'accepte un nombre limité de mariages chaque année afin d'offrir à chaque couple l'attention qu'il mérite. Pour la haute saison, je recommande de réserver 12 mois à l'avance." },
-          { q: "Vous déplacez-vous pour les mariages ?", a: "Photographe de mariage à Vienne, mon terrain de jeu principal est l'Isère et la région lyonnaise. Je suis également amené à me déplacer dans toute la région Auvergne-Rhône-Alpes." },
-          { q: "Comment se déroule la réservation ?", a: "Après un premier contact par mail ou téléphone, je vous propose de nous rencontrer pour discuter plus avant de vos envies et de vos besoins le jour de votre mariage. Lorsque vous souhaitez réserver votre date de façon définitive, je vous invite à me retourner un contrat signé ainsi qu'à verser un acompte de 30%." },
-          { q: "Quels sont vos tarifs ?", a: "Je propose une formule unique à 1 600 € pour la journée entière, car je ne conçois pas de vous accompagner à moitié. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l’envoi d’une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage. Quelques jours après les festivités, je m’engage également à vous transmettre un échantillon des plus belles photos de votre grand jour. J’inclus généralement un panachage de portraits, de photos en noir et blanc et de clichés naturels que vous pouvez découvrir à deux ou en famille." },
-          { q: "Serez-vous personnellement notre photographe ?", a: "Oui. Je photographie personnellement chaque mariage que je réserve." },
-          { q: "Proposez-vous des séances engagement ?", a: "À mes yeux, une bonne ambiance est une des clés de la réussite d’un reportage photo de mariage. C’est dans cette optique qu’il me semble important de nous rencontrer avant la date du mariage. En apprenant à me connaître en amont, il devient plus aisé de vous sentir en confiance le jour J. De mon côté, je peux mieux m’adapter à vos envies et apporter des réponses à toutes vos interrogations. Pour cette raison, j’inclus dans chacun de mes forfaits un shooting photo en couple en amont de votre union. Cette séance d’engagement gratuite a lieu à la date de votre choix." },
-          { q: "Nos photos seront-elles publiées ?", a: "Les images ne seront publiées que sur mon site ou sur mon Instagram, comme les mariages que vous avez pu y découvrir. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible." }
-        ].map((item, index, array) => (
+        {/* [OPTIM] Les 8 questions sortent de la liste unique `faqItems` (en haut du fichier).
+            Même HTML et mêmes textes qu'avant ; plus de question recopiée à la main ici. */}
+        {faqItems.map((item, index, array) => (
           <div class={`faq-item border-accent/20 cursor-pointer group ${index === array.length - 1 ? '' : 'border-b'}`} data-faq>
             <div class="faq-question flex items-center py-6 lg:py-10 gap-6 lg:gap-10">
-              <span class="font-sans font-light text-[clamp(20px,1.66vw,32px)] opacity-60 flex-shrink-0 w-8 lg:w-16">0{index + 2}</span>
+              <span class="font-sans font-light text-[clamp(20px,1.66vw,32px)] opacity-60 flex-shrink-0 w-8 lg:w-16">{String(index + 1).padStart(2, '0')}</span>
               <span class="font-serif font-normal text-[clamp(32px,3.33vw,64px)] leading-[1.4] flex-1 group-hover:opacity-70 transition-opacity">{item.q}</span>
               <span class="faq-icon font-sans font-light text-[clamp(24px,1.66vw,32px)] opacity-60 flex-shrink-0 transition-transform duration-300 origin-center">+</span>
             </div>

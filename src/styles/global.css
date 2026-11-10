@@ -1,4 +1,14 @@
-@import "tailwindcss";
+/*
+ * [OPTIM] source("..") = Tailwind ne cherche les classes CSS que dans src/.
+ * Par défaut il lisait TOUT le dépôt, y compris les brouillons à la racine
+ * (reference.html, avagyan.html, temp_*.html, generated-grid.html…) et
+ * fabriquait du CSS pour des classes que le site n'utilise jamais.
+ * Résultat : feuille de style 58 Ko → 51 Ko (-13 %), or ce fichier bloque
+ * l'affichage de chaque page tant qu'il n'est pas téléchargé.
+ * Conséquence à connaître : une classe Tailwind écrite hors de src/ ne sera
+ * plus générée (c'est voulu).
+ */
+@import "tailwindcss" source("..");
 
 .availability-link {
     display: inline-flex;

@@ -2,12 +2,18 @@
 import Layout from '../layouts/Layout.astro';
 import { projects } from '../data/projects';
 import { imgAttrs } from '../utils/images';
+import { siteConfig } from '../data/siteConfig';
+
+// [OPTIM] Le tarif vient de siteConfig.price (source unique). Cette page affichait
+// encore « 1 600 € » en grand, dans sa description Google et dans sa FAQ, alors
+// que ses données structurées disaient déjà 1500 : les quatre sont maintenant liés.
+const { price } = siteConfig;
 
 const siteUrl = (Astro.site || Astro.url.origin).toString();
 const pageUrl = new URL('/photographe-mariage-vienne/', siteUrl).toString();
 
 const title = "Photographe mariage Vienne (38) : reportage de votre journée";
-const description = "Hedi, photographe de mariage à Vienne (Isère) : depuis 2020, une dizaine de mariages par an, des préparatifs à la soirée. Formule unique à 1 600 €, séance engagement offerte.";
+const description = `Hedi, photographe de mariage à Vienne (Isère) : depuis 2020, une dizaine de mariages par an, des préparatifs à la soirée. Formule unique à ${price.text}, séance engagement offerte.`;
 
 const hero = projects.find(p => p.slug === 'morgane-franck')!;
 const strip = ['fanny-ben', 'assia-jeremy', 'lucy-romain'].map(slug => projects.find(p => p.slug === slug)!);
@@ -18,7 +24,7 @@ const faqItems = [
   { q: "Peut-on se rencontrer avant de réserver ?", a: "Bien sûr. Après un premier échange par mail ou par téléphone, je vous propose de nous rencontrer pour parler de vos envies et du déroulé de votre journée. La date est réservée à la signature du contrat, avec un acompte de 30 %." },
   { q: "Combien de temps à l'avance faut-il réserver ?", a: "Pour la haute saison, je vous conseille de réserver environ 12 mois à l'avance. Le plus simple est de me demander si votre date est encore libre." },
   { q: "Où faire la séance engagement ?", a: "Où vous le souhaitez. À Vienne, les vestiges romains, la vieille ville et les quais du Rhône s'y prêtent très bien, mais un lieu qui compte pour vous deux est souvent le meilleur choix." },
-  { q: "Que contient la formule à 1 600 € ?", a: "Le reportage de toute la journée, des préparatifs à la soirée, la galerie en ligne des photos retouchées, une clé USB, 50 tirages dans un coffret, les frais de déplacement et une séance engagement offerte avant le mariage." }
+  { q: `Que contient la formule à ${price.text} ?`, a:"Le reportage de toute la journée, des préparatifs à la soirée, la galerie en ligne des photos retouchées, une clé USB, 50 tirages dans un coffret, les frais de déplacement et une séance engagement offerte avant le mariage." }
 ];
 
 const schema = {
@@ -43,7 +49,7 @@ const schema = {
         { "@type": "AdministrativeArea", "name": "Isère" },
         { "@type": "City", "name": "Lyon" }
       ],
-      "offers": { "@type": "Offer", "price": "1500", "priceCurrency": "EUR" }
+      "offers": { "@type": "Offer", "price": String(price.amount), "priceCurrency": "EUR" }
     },
     {
       "@type": "FAQPage",
@@ -194,7 +200,7 @@ const schema = {
 
       <section>
         <h2 class="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-widest opacity-80 mb-6">Une formule unique</h2>
-        <p class="font-serif text-[12vw] md:text-6xl font-light leading-none tracking-widest my-6">1 600 €</p>
+        <p class="font-serif text-[12vw] md:text-6xl font-light leading-none tracking-widest my-6">{price.text}</p>
         <p class="mb-5">Pour la journée complète, sans option à ajouter :</p>
         <ul class="list-none p-0 m-0 space-y-2">
           <li>— le reportage, des préparatifs à la soirée ;</li>
