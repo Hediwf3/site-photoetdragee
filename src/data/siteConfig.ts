@@ -29,6 +29,24 @@ export const siteConfig = {
         text: `${String(PRICE_AMOUNT).replace(/\B(?=(\d{3})+$)/g, NBSP)}${NBSP}€`,
     },
 
+    // [OPTIM] FAITS DE LA PRESTATION : UNE SEULE SOURCE, comme pour le tarif.
+    // Ces informations (ancienneté, durée du reportage, nombre de photos, délai)
+    // n'étaient écrites nulle part de façon précise. Elles sont maintenant
+    // affichées en clair sur la page Vienne et la page À propos, et envoyées à
+    // Google dans les données structurées : ce sont ces faits que Google et ses
+    // réponses IA reprennent pour présenter un photographe.
+    // Pour changer un chiffre : le modifier ici uniquement, puis `npm run build`.
+    // (public/llms.txt reste un fichier texte à corriger à la main.)
+    facts: {
+        since: 2020,                                         // photographe de mariage depuis…
+        weddingsPerYear: "une dizaine",                      // mariages par an
+        coverage: "des préparatifs à la découpe du gâteau",  // ce que couvre le reportage
+        photos: "entre 600 et 900",                          // photos retouchées livrées
+        delivery: "deux semaines",                           // délai de la galerie en ligne
+        style: "un regard éditorial et discret, pour des images naturelles et sincères",
+        area: "Vienne, le Pays viennois, l'Isère, la région lyonnaise et l'Auvergne-Rhône-Alpes",
+    },
+
     // Navigation
     navLinks: [
         { label: "Projets", href: "/projets/" },

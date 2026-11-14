@@ -84,7 +84,9 @@ const businessSchema = {
   "makesOffer": {
     "@type": "Offer",
     "name": "Reportage photo de mariage — journée complète",
-    "description": "Couverture intégrale de la journée de mariage, des préparatifs à la soirée : galerie en ligne retouchée, frais de déplacement, clé USB, 50 tirages en coffret premium et séance engagement offerte.",
+    // [OPTIM] Description de l'offre précisée avec siteConfig.facts : où s'arrête le
+    // reportage, combien de photos, sous quel délai (avant : « des préparatifs à la soirée », sans chiffres).
+    "description": `Couverture intégrale de la journée de mariage, ${siteConfig.facts.coverage} : ${siteConfig.facts.photos} photos retouchées livrées en galerie en ligne sous ${siteConfig.facts.delivery}, frais de déplacement, clé USB, 50 tirages en coffret premium et séance engagement offerte.`,
     "price": String(siteConfig.price.amount),
     "priceCurrency": "EUR"
   },

@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { imgAttrs } from '../utils/images';
 import { siteConfig } from '../data/siteConfig';
+import { projects } from '../data/projects';
 
 const description = "Je suis Hedi, photographe de mariage basé à Vienne (Isère, 38200). Reportages sincères et élégants à Vienne, Lyon et en Auvergne-Rhône-Alpes. FAQ : tarifs, réservation, déplacements.";
 
@@ -17,6 +18,28 @@ const description = "Je suis Hedi, photographe de mariage basé à Vienne (Isèr
 // Le tarif vient de siteConfig.price (source unique).
 const { price } = siteConfig;
 
+// [OPTIM] SECTION PROFIL « Hedi, en quelques repères ».
+// Avant, cette page racontait la démarche mais ne donnait aucun repère concret :
+// ni depuis quand, ni combien de mariages, ni où, ni dans quels lieux. Ce sont
+// ces preuves (qui est derrière le site, avec quelle expérience) que Google et
+// ses réponses IA reprennent pour présenter un photographe.
+// Les chiffres viennent de siteConfig.facts (même source que la page Vienne) et
+// la liste des lieux de src/data/projects.ts : rien n'est recopié à la main.
+const { facts } = siteConfig;
+const cap = (text: string) => text[0].toUpperCase() + text.slice(1);
+const venues = projects.map(p => `${p.venue.name} (${p.venue.city})`).join(", ");
+
+const profileFacts = [
+  { label: "Photographe", value: "Hedi, fondateur de Photo & Dragée" },
+  { label: "Installé à", value: "Vienne (38200), en Isère, à une trentaine de kilomètres au sud de Lyon" },
+  { label: "Expérience", value: `Photographe de mariage depuis ${facts.since}, ${facts.weddingsPerYear} de mariages par an` },
+  { label: "Style", value: cap(facts.style) },
+  { label: "Lieux photographiés", value: `${venues}, Domaine de Grand Maison` },
+  { label: "Secteur", value: cap(facts.area) },
+  { label: "Reportage", value: `La journée entière, ${facts.coverage} : ${facts.photos} photos retouchées, en galerie en ligne sous ${facts.delivery}` },
+  { label: "Formule", value: `Unique, à ${price.text}, déplacement et séance engagement inclus` },
+];
+
 const faqItems: { q: string; a: string; short?: string }[] = [
   { q: "Quel est votre style photographique ?", a: "Mon style entremêle esthétique intemporelle et moments d’authenticité captés sur le vif. Je fais rimer convivialité avec professionnalisme pour accompagner les jeunes mariés avec bonne humeur et les mettre dans les meilleures conditions pour être à l’aise face à l’objectif." },
   { q: "Combien de temps à l'avance faut-il réserver ?", a: "J'accepte un nombre limité de mariages chaque année afin d'offrir à chaque couple l'attention qu'il mérite. Pour la haute saison, je recommande de réserver 12 mois à l'avance." },
@@ -27,6 +50,8 @@ const faqItems: { q: string; a: string; short?: string }[] = [
     a: `Je propose une formule unique à ${price.text} pour la journée entière, car je ne conçois pas de vous accompagner à moitié. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l’envoi d’une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage. Quelques jours après les festivités, je m’engage également à vous transmettre un échantillon des plus belles photos de votre grand jour. J’inclus généralement un panachage de portraits, de photos en noir et blanc et de clichés naturels que vous pouvez découvrir à deux ou en famille.`,
     short: `Je propose une formule unique à ${price.text} pour la journée entière. Ce tarif inclut le reportage intégral, la mise à disposition sur une galerie en ligne des photos retouchées, les frais de déplacement, l'envoi d'une clé USB et de 50 tirages imprimés livrés dans un coffret premium dans le mois qui suit votre cérémonie de mariage.`,
   },
+  // [OPTIM] Question ajoutée : nombre de photos et délai de livraison (chiffres de siteConfig.facts).
+  { q: "Combien de photos recevrons-nous, et quand ?", a: `${cap(facts.photos)} photos retouchées, selon le déroulé de votre mariage. Le reportage couvre la journée entière, ${facts.coverage}. Votre galerie en ligne est prête sous ${facts.delivery} ; la clé USB et le coffret de 50 tirages suivent dans le mois qui suit le mariage.` },
   { q: "Serez-vous personnellement notre photographe ?", a: "Oui. Je photographie personnellement chaque mariage que je réserve." },
   {
     q: "Proposez-vous des séances engagement ?",
@@ -39,6 +64,26 @@ const faqItems: { q: string; a: string; short?: string }[] = [
     short: "Les images ne seront publiées que sur mon site ou sur mon Instagram. Si vous préférez la confidentialité, un accord de non-divulgation (NDA) est possible.",
   },
 ];
+
+// [OPTIM] Données « page de profil » pour Google : qui est Hedi, son métier, sa
+// ville, et le lien avec la fiche de l'entreprise (déjà décrite sur toutes les pages).
+const siteUrl = (Astro.site || Astro.url.origin).toString();
+const profileSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "url": new URL('/a-propos/', siteUrl).toString(),
+  "inLanguage": "fr-FR",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Hedi",
+    "jobTitle": "Photographe de mariage",
+    "description": `Photographe de mariage installé à Vienne (Isère) depuis ${facts.since}, ${facts.weddingsPerYear} de mariages par an. ${cap(facts.style)}.`,
+    "worksFor": { "@id": `${siteUrl}#business` },
+    "workLocation": { "@type": "City", "name": "Vienne" },
+    "knowsAbout": ["Photographie de mariage", "Reportage de mariage", "Séance engagement"],
+    "sameAs": [siteConfig.socials.instagram]
+  }
+};
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -54,6 +99,7 @@ const faqSchema = {
 <Layout title="À propos — Hedi, photographe de mariage à Vienne (Isère)" description={description} hideHeader={true} hideLoadingOverlay={true}>
 
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
 
   {/* Fixed Floating Header (Project Page Style) */}
   <header class="header-container z-[100] mix-blend-difference fixed top-0 left-0 w-full pointer-events-none">
@@ -188,6 +234,27 @@ const faqSchema = {
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  {/* ═══════════════════════════════════════════ */}
+  {/* SECTION 2 bis — PROFIL EN QUELQUES REPÈRES */}
+  {/* ═══════════════════════════════════════════ */}
+  {/* [OPTIM] Nouvelle section. Elle reprend les styles déjà présents sur la page :
+      le titre de la section « Ma promesse » et les filets fins de la FAQ. */}
+  <section id="profil" class="w-full bg-surface text-accent pt-[120px] lg:pt-[200px] px-6 lg:px-8">
+    <div class="max-w-[2560px] mx-auto">
+      <h2 class="reveal-up font-bodoni-sc uppercase font-normal text-[clamp(28px,2.5vw,56px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
+        Hedi, en quelques repères
+      </h2>
+      <dl class="m-0 w-full border-t border-accent/20 font-sans font-normal text-[clamp(18px,1.66vw,32px)] leading-[1.5]">
+        {profileFacts.map((fact) => (
+          <div class="flex flex-col lg:flex-row gap-1 lg:gap-10 py-6 lg:py-8 border-b border-accent/20">
+            <dt class="lg:w-[24%] flex-shrink-0 font-light opacity-60">{fact.label}</dt>
+            <dd class="m-0 flex-1 opacity-90">{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 

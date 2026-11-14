@@ -9,6 +9,31 @@ import { siteConfig } from '../data/siteConfig';
 // que ses données structurées disaient déjà 1500 : les quatre sont maintenant liés.
 const { price } = siteConfig;
 
+// [OPTIM] Les faits de la prestation (ancienneté, durée du reportage, nombre de
+// photos, délai) viennent de siteConfig.facts : même source que la page À propos
+// et que les données envoyées à Google.
+const { facts } = siteConfig;
+
+// Met une majuscule au début d'une phrase tirée de siteConfig.facts.
+const cap = (text: string) => text[0].toUpperCase() + text.slice(1);
+
+// [OPTIM] BLOC « EN BREF » : les informations essentielles en une ligne chacune.
+// Avant, elles étaient dispersées dans les paragraphes (ou absentes : nombre de
+// photos, délai de livraison). Google et ses réponses IA citent plus volontiers
+// une page qui dit clairement qui, où, quoi, combien et en combien de temps.
+const keyFacts = [
+  { label: "Photographe", value: "Hedi, Photo & Dragée" },
+  { label: "Adresse", value: "21 rue de Bourgogne, 38200 Vienne (Isère)" },
+  { label: "Expérience", value: `Photographe de mariage depuis ${facts.since}, ${facts.weddingsPerYear} de mariages par an` },
+  { label: "Style", value: cap(facts.style) },
+  { label: "Reportage", value: `La journée entière, ${facts.coverage}` },
+  { label: "Photos livrées", value: `${cap(facts.photos)} photos retouchées, selon le mariage` },
+  { label: "Délai", value: `Galerie en ligne sous ${facts.delivery}` },
+  { label: "Tarif", value: `Formule unique à ${price.text}, déplacement et séance engagement inclus` },
+  { label: "Secteur", value: cap(facts.area) },
+  { label: "Réservation", value: "Environ 12 mois à l'avance pour la haute saison, acompte de 30 %" },
+];
+
 const siteUrl = (Astro.site || Astro.url.origin).toString();
 const pageUrl = new URL('/photographe-mariage-vienne/', siteUrl).toString();
 
@@ -24,7 +49,11 @@ const faqItems = [
   { q: "Peut-on se rencontrer avant de réserver ?", a: "Bien sûr. Après un premier échange par mail ou par téléphone, je vous propose de nous rencontrer pour parler de vos envies et du déroulé de votre journée. La date est réservée à la signature du contrat, avec un acompte de 30 %." },
   { q: "Combien de temps à l'avance faut-il réserver ?", a: "Pour la haute saison, je vous conseille de réserver environ 12 mois à l'avance. Le plus simple est de me demander si votre date est encore libre." },
   { q: "Où faire la séance engagement ?", a: "Où vous le souhaitez. À Vienne, les vestiges romains, la vieille ville et les quais du Rhône s'y prêtent très bien, mais un lieu qui compte pour vous deux est souvent le meilleur choix." },
-  { q: `Que contient la formule à ${price.text} ?`, a:"Le reportage de toute la journée, des préparatifs à la soirée, la galerie en ligne des photos retouchées, une clé USB, 50 tirages dans un coffret, les frais de déplacement et une séance engagement offerte avant le mariage." }
+  // [OPTIM] Deux questions ajoutées (nombre de photos, délai) et la réponse sur la
+  // formule précisée : ces réponses partent aussi vers Google (données FAQPage).
+  { q: "Combien de photos recevrons-nous ?", a: `${cap(facts.photos)} photos retouchées, selon le déroulé de votre mariage. Le reportage couvre la journée entière, ${facts.coverage}.` },
+  { q: "Quand recevrons-nous nos photos ?", a: `Votre galerie en ligne est prête sous ${facts.delivery}. La clé USB et le coffret de 50 tirages suivent dans le mois qui suit le mariage.` },
+  { q: `Que contient la formule à ${price.text} ?`, a: `Le reportage de toute la journée, ${facts.coverage}, ${facts.photos} photos retouchées livrées en galerie en ligne sous ${facts.delivery}, une clé USB, 50 tirages dans un coffret, les frais de déplacement et une séance engagement offerte avant le mariage.` }
 ];
 
 const schema = {
@@ -43,6 +72,8 @@ const schema = {
       "@type": "Service",
       "serviceType": "Photographe de mariage",
       "name": "Reportage photo de mariage à Vienne",
+      // [OPTIM] Description du service ajoutée pour Google : durée, nombre de photos, délai.
+      "description": `Reportage de la journée entière, ${facts.coverage} : ${facts.photos} photos retouchées, livrées en galerie en ligne sous ${facts.delivery}. Photographe de mariage depuis ${facts.since}.`,
       "provider": { "@id": `${siteUrl}#business` },
       "areaServed": [
         { "@type": "City", "name": "Vienne" },
@@ -107,6 +138,20 @@ const schema = {
 
     <div class="px-6 md:px-12 max-w-3xl mx-auto mt-24 md:mt-36 font-serif font-light text-lg md:text-xl leading-relaxed space-y-20 md:space-y-28">
 
+      {/* [OPTIM] Bloc « En bref » : même présentation que la liste des lieux plus bas
+          (libellé en petites capitales, valeur en regard, filets fins). */}
+      <section id="en-bref">
+        <h2 class="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-widest opacity-80 mb-6">En bref</h2>
+        <dl class="m-0 border-t border-accent/20">
+          {keyFacts.map((fact) => (
+            <div class="flex flex-col md:flex-row md:items-baseline gap-x-8 gap-y-1 py-4 border-b border-accent/20">
+              <dt class="md:w-40 shrink-0 font-sans text-[10px] md:text-xs uppercase tracking-widest opacity-70">{fact.label}</dt>
+              <dd class="m-0">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
       <section>
         <h2 class="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-widest opacity-80 mb-6">Un photographe installé à Vienne</h2>
         <p class="mb-5">
@@ -138,8 +183,10 @@ const schema = {
           un moment à deux pour vos portraits de couple, de préférence quand la lumière s'adoucit.
         </p>
         <p>
-          <strong class="font-normal">La soirée.</strong> Les discours, l'entrée des mariés, la découpe du gâteau et la piste de danse :
-          je reste jusqu'aux heures avancées de la soirée.
+          {/* [OPTIM] Avant : « …et la piste de danse : je reste jusqu'aux heures avancées de la soirée ».
+              Le reportage s'arrête à la découpe du gâteau : le texte le dit maintenant. */}
+          <strong class="font-normal">La soirée.</strong> L'entrée des mariés, les discours et la découpe du gâteau :
+          je reste à vos côtés jusqu'au gâteau.
         </p>
       </section>
 
@@ -203,8 +250,9 @@ const schema = {
         <p class="font-serif text-[12vw] md:text-6xl font-light leading-none tracking-widest my-6">{price.text}</p>
         <p class="mb-5">Pour la journée complète, sans option à ajouter :</p>
         <ul class="list-none p-0 m-0 space-y-2">
-          <li>— le reportage, des préparatifs à la soirée ;</li>
-          <li>— la galerie en ligne de vos photos retouchées ;</li>
+          {/* [OPTIM] Deux premières lignes précisées : fin du reportage, nombre de photos, délai. */}
+          <li>— le reportage, {facts.coverage} ;</li>
+          <li>— {facts.photos} photos retouchées, en galerie en ligne sous {facts.delivery} ;</li>
           <li>— une clé USB et 50 tirages dans un coffret ;</li>
           <li>— les frais de déplacement ;</li>
           <li>— une séance engagement offerte avant le mariage.</li>

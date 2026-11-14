@@ -131,3 +131,28 @@ test('the price is the same everywhere: pages, structured data and llms.txt', ()
     assert.ok([...content.matchAll(amounts)].length > 0, `${name} n'affiche plus le tarif`);
   }
 });
+
+// [OPTIM] Garde-fou « faits lisibles par Google et ses réponses IA ».
+// Les informations concrètes (depuis quand, combien de photos, sous quel délai)
+// doivent rester écrites en clair sur la page Vienne et la page À propos, et les
+// photos de l'accueil doivent décrire ce qu'elles montrent : plus d'étiquette
+// vague du type « Mariage Fanny + Ben ».
+test('key facts are stated in clear text and home photos are really described', () => {
+  const vienne = page('photographe-mariage-vienne');
+  assert.ok(vienne.includes('id="en-bref"'));
+  const about = page('a-propos');
+  assert.ok(about.includes('id="profil"'));
+  assert.ok(about.includes('"@type":"ProfilePage"'));
+  for (const [name, html] of [['/photographe-mariage-vienne', vienne], ['/a-propos', about]]) {
+    for (const fact of ['depuis 2020', '600 et 900 photos', 'sous deux semaines', 'découpe du gâteau']) {
+      assert.ok(html.includes(fact), `${name} ne dit plus « ${fact} »`);
+    }
+  }
+  assert.ok(!vienne.includes('heures avancées'));
+
+  const alts = [...page('').matchAll(/<img[^>]*\salt="([^"]*)"/g)].map(m => m[1]);
+  assert.equal(alts.length, 64);
+  for (const alt of alts) {
+    assert.ok(alt.length >= 25 && !/ \+ /.test(alt) && !/Portfolio|Photo de mariage$/.test(alt), alt);
+  }
+});
