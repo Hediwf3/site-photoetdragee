@@ -238,27 +238,6 @@ const faqSchema = {
   </section>
 
   {/* ═══════════════════════════════════════════ */}
-  {/* SECTION 2 bis — PROFIL EN QUELQUES REPÈRES */}
-  {/* ═══════════════════════════════════════════ */}
-  {/* [OPTIM] Nouvelle section. Elle reprend les styles déjà présents sur la page :
-      le titre de la section « Ma promesse » et les filets fins de la FAQ. */}
-  <section id="profil" class="w-full bg-surface text-accent pt-[120px] lg:pt-[200px] px-6 lg:px-8">
-    <div class="max-w-[2560px] mx-auto">
-      <h2 class="reveal-up font-bodoni-sc uppercase font-normal text-[clamp(28px,2.5vw,56px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
-        Hedi, en quelques repères
-      </h2>
-      <dl class="m-0 w-full border-t border-accent/20 font-sans font-normal text-[clamp(18px,1.66vw,32px)] leading-[1.5]">
-        {profileFacts.map((fact) => (
-          <div class="flex flex-col lg:flex-row gap-1 lg:gap-10 py-6 lg:py-8 border-b border-accent/20">
-            <dt class="lg:w-[24%] flex-shrink-0 font-light opacity-60">{fact.label}</dt>
-            <dd class="m-0 flex-1 opacity-90">{fact.value}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  </section>
-
-  {/* ═══════════════════════════════════════════ */}
   {/* SECTION 3 — FAQ ACCORDION                  */}
   {/* ═══════════════════════════════════════════ */}
   <section id="faq" class="w-full bg-surface text-accent pt-[120px] lg:pt-[200px] px-6 lg:px-8" style="scroll-margin-top: 150px;">
@@ -309,6 +288,30 @@ const faqSchema = {
       </a>
     </div>
   </section>
+
+  {/* ═══════════════════════════════════════════ */}
+  {/* SECTION 5 — PROFIL EN QUELQUES REPÈRES     */}
+  {/* ═══════════════════════════════════════════ */}
+  {/* [OPTIM] Nouvelle section, placée tout en bas de la page : après la FAQ et
+      après le lien vers le formulaire de contact (demande de Hedi), pour ne pas
+      couper la lecture. Elle reprend les styles déjà présents sur la page : le
+      titre de la section « Ma promesse » et les filets fins de la FAQ. */}
+  <section id="profil" class="w-full bg-surface text-accent pt-[120px] lg:pt-[160px] pb-[120px] lg:pb-[160px] px-6 lg:px-8 border-t border-accent/10">
+    <div class="max-w-[2560px] mx-auto">
+      <h2 class="reveal-up font-bodoni-sc uppercase font-normal text-[clamp(28px,2.5vw,56px)] leading-[1.2] mb-12" style="font-optical-sizing: auto;">
+        Hedi, en quelques repères
+      </h2>
+      <dl class="m-0 w-full border-t border-accent/20 font-sans font-normal text-[clamp(18px,1.66vw,32px)] leading-[1.5]">
+        {profileFacts.map((fact) => (
+          <div class="flex flex-col lg:flex-row gap-1 lg:gap-10 py-6 lg:py-8 border-b border-accent/20">
+            <dt class="lg:w-[24%] flex-shrink-0 font-light opacity-60">{fact.label}</dt>
+            <dd class="m-0 flex-1 opacity-90">{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
 
 </Layout>
 

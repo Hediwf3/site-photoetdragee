@@ -156,3 +156,21 @@ test('key facts are stated in clear text and home photos are really described', 
     assert.ok(alt.length >= 25 && !/ \+ /.test(alt) && !/Portfolio|Photo de mariage$/.test(alt), alt);
   }
 });
+
+// [OPTIM] Garde-fou « anciennes adresses ». Le site WordPress d'avant mars 2026
+// avait d'autres adresses (/photographe-de-mariage-vienne/, /prendre-contact/…).
+// À la migration, rien ne les renvoyait vers le nouveau site : elles affichaient
+// une erreur 404 et Google perdait ces pages. Elles sont maintenant redirigées
+// de façon permanente dans vercel.json. Ce test vérifie que chaque redirection
+// mène à une page qui existe vraiment sur le site construit.
+test('old WordPress addresses redirect permanently to pages that exist', () => {
+  const { redirects } = JSON.parse(readFileSync('vercel.json', 'utf8'));
+  const sources = redirects.map(r => r.source);
+  for (const old of ['/photographe-de-mariage-vienne/', '/a-propos-photographe-de-mariage/', '/prendre-contact/']) {
+    assert.ok(sources.includes(old), old);
+  }
+  for (const { source, destination, permanent } of redirects) {
+    assert.equal(permanent, true, source);
+    assert.ok(existsSync(join('dist', destination, 'index.html')), `${source} → ${destination}`);
+  }
+});

@@ -41,7 +41,8 @@ const title = "Photographe mariage Vienne (38) : reportage de votre journée";
 const description = `Hedi, photographe de mariage à Vienne (Isère) : depuis 2020, une dizaine de mariages par an, des préparatifs à la soirée. Formule unique à ${price.text}, séance engagement offerte.`;
 
 const hero = projects.find(p => p.slug === 'morgane-franck')!;
-const strip = ['fanny-ben', 'assia-jeremy', 'lucy-romain'].map(slug => projects.find(p => p.slug === slug)!);
+// [OPTIM] Ordre des trois photos : Lucy & Romain au centre (avant : à droite), plus équilibré.
+const strip = ['fanny-ben', 'lucy-romain', 'assia-jeremy'].map(slug => projects.find(p => p.slug === slug)!);
 
 const faqItems = [
   { q: "Combien de mariages photographiez-vous par an ?", a: "Une dizaine. Je photographie des mariages depuis 2020 et je garde volontairement un nombre limité de dates, pour être pleinement disponible pour chaque couple, avant comme après le jour J." },

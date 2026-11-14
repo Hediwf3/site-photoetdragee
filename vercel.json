@@ -1,5 +1,37 @@
 {
   "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/photographe-de-mariage-vienne/",
+      "destination": "/photographe-mariage-vienne/",
+      "permanent": true
+    },
+    {
+      "source": "/photographe-de-mariage-lyon/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/a-propos-photographe-de-mariage/",
+      "destination": "/a-propos/",
+      "permanent": true
+    },
+    {
+      "source": "/author/hedi-blog/",
+      "destination": "/a-propos/",
+      "permanent": true
+    },
+    {
+      "source": "/prendre-contact/",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio-item/:slug/",
+      "destination": "/projets/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/fonts/(.*).woff2",
