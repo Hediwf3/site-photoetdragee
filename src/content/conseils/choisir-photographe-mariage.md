@@ -69,6 +69,6 @@ Vous avez trouvé un photographe qui réunit tous les critères ? Alors quelle 
 
 **Photographe professionnel basé à Vienne**, je me ferais un plaisir de répondre à toutes vos questions par mail, puis lors d’un rendez-vous. De là, je vous accompagne jusqu’au grand jour dans la bonne humeur. Afin de vous mettre en confiance, mon forfait inclut même une [séance photo en couple](/projets/) offerte en amont du jour J.
 
-Dans les jours qui suivent votre journée de mariage, je mets à votre disposition une clé USB incluant quelques images du mariage à partager avec vos proches, puis une galerie en ligne où retrouver vos plus beaux instants d’émotion.
+Dans les jours qui suivent votre journée de mariage, je vous envoie un échantillon de vos plus belles images à partager avec vos proches, puis, sous deux semaines, une galerie en ligne où retrouver vos plus beaux instants d’émotion.
 
-Call-ot-action//Alors vous souhaitez choisir un photographe de mariage en région Rhône-Alpes ? Je suis à votre écoute dès à présent.//
+Alors vous souhaitez choisir un photographe de mariage en région Rhône-Alpes ? Je suis à votre écoute dès à présent.

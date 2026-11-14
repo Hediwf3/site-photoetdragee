@@ -21,7 +21,7 @@ photos:
     after: "Votre séance d’engagement à Vienne"
   - src: "/portfolio-webp/Nasrine Adem-123.webp"
     alt: "Des mariés se regardent devant une porte en pierre du centre ancien de Vienne"
-    after: "Votre séance d’engagement à Vienne"
+    after: "Séance d’engagement à Vienne : comment"
 ---
 Votre mariage à Vienne se profile à l’horizon ? Avant le grand jour, il est toujours rassurant de rencontrer le photographe qui va immortaliser vos plus beaux moments. C’est là tout l’objectif d’une [séance d’engagement](/conseils/pourquoi-seance-dengagement/). Ainsi, ce shooting en tête-à-tête vous permet de faire connaissance avec celui qui va vous accompagner tout le long de la journée de mariage, des [préparatifs](/projets/) à la soirée. Alors où dénicher un cadre romantique pour une séance d’engagement à Vienne ? Puisez l’inspiration parmi ces six lieux à moins d’une heure de route de la ville.
 
@@ -75,7 +75,7 @@ Un petit tour sur la Passerelle et vous pouvez même changer de région en une p
 
 Ca y est, vous avez trouvé la bonne date pour votre séance photo. Alors découvrez quelques **astuces pratiques** en vue d’une séance d’engagement à Vienne réussie.
 
-- Nous vous conseillons d’abord de **coordonner vos habits** en privilégiant des **tonalités neutres,** sans logo ni imprimé**.** Vous pouvez tout à fait choisir une tenue habillée, de robe en chemise, à condition toutefois d’être parfaitement à votre aise. Des vêtements cocooning comme une veste ou en pull font tout aussi bien l’affaire.
+- Nous vous conseillons d’abord de **coordonner vos habits** en privilégiant des **tonalités neutres,** sans logo ni imprimé. Vous pouvez tout à fait choisir une tenue habillée, de robe en chemise, à condition toutefois d’être parfaitement à votre aise. Des vêtements cocooning comme une veste ou en pull font tout aussi bien l’affaire.
 - L’horaire de la séance de photos en couple dépend de vos disponibilités. Néanmoins, la lumière naturelle est la plus belle à **une heure environ du coucher de soleil.** Par ailleurs, mieux vaut prévoir un shooting un soir de semaine ou un dimanche. En effet, le samedi est une journée traditionnellement chargée sur le calendrier d’un photographe de mariage.
 - Enfin, comptez **une heure minimum** pour votre séance d’engagement à Vienne. Ainsi, vous pourrez à la fois poser dans plusieurs lieux et poser toutes vos questions sans être pressés par le temps.
 

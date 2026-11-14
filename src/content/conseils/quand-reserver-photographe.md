@@ -1,7 +1,7 @@
 ---
 title: "Comment réserver son photographe de mariage au bon moment ?"
 metaTitle: "Photographe de mariage : quand réserver ?"
-description: "Vous souhaitez faire appel à l’œil avisé d’un professionnel pour immortaliser votre mariage ? Suivez le guide pour savoir quand réserver votre prestation photo. //META"
+description: "Vous souhaitez faire appel à l’œil avisé d’un professionnel pour immortaliser votre mariage ? Suivez le guide pour savoir quand réserver votre prestation photo."
 date: 2021-10-05
 oldPath: "/2021/10/05/quand-reserver-photographe/"
 photos:
@@ -47,7 +47,7 @@ En fonction du prestataire, vous pouvez également vous positionner en posant **
 
 S’il n’est jamais trop tôt pour contacter votre photographe de mariage, il n’est **jamais trop tard** non plus. Il arrive que des prestataires signent un contrat d’une semaine pour la suivante, alors osez décrocher votre téléphone. Le maître mot : qui ne tente rien n’a rien.
 
-Il suffit parfois d’un créneau qui se libère ou d’un concours de circonstance favorable pour qu’un photographe de mariage vous dise oui à la **dernière minute.** Si toutefois votre date est prise, il peut alors vous **orienter vers d’autres professionnels expérimentés** pour sublimer le jour du mariage**.** À la clé, un gain de temps inestimable et une pression en moins sur vos épaules à l’approche de la cérémonie.
+Il suffit parfois d’un créneau qui se libère ou d’un concours de circonstance favorable pour qu’un photographe de mariage vous dise oui à la **dernière minute.** Si toutefois votre date est prise, il peut alors vous **orienter vers d’autres professionnels expérimentés** pour sublimer le jour du mariage. À la clé, un gain de temps inestimable et une pression en moins sur vos épaules à l’approche de la cérémonie.
 
 ## Photographe professionnel de mariage : quand faut-il confirmer la prestation ?
 
@@ -64,14 +64,3 @@ C’est ce premier versement qui vous garantit la **réservation ferme** de votr
 Quel est le meilleur moment pour engager un photographe de mariage ? La réponse dépend de vous, de vos besoins comme de la date de la cérémonie. S’il reste conseillé aux mariés de prendre contact plusieurs mois à l’avance, certains photographes de mariage restent disponibles jusqu’à la dernière minute pour capturer les plus beaux moments de votre journée de mariage. Alors n’hésitez pas à multiplier les prises de contact pour que vos photos de mariage ne ressemblent à personne d’autre qu’à vous.
 
 Les photos de cet article vous plaisent ? Vous pouvez consulter mes disponibilités en ligne à tout moment. Dernière minute ou réservation anticipée, je mets à votre disposition mes services pour vos photographies de mariage à Lyon et ses environs.
-
-Champ sémantique :
-
-- Mariages
-- Retouches
-- Prendre des photos
-- Prise de vue
-- Discrétion / discrète
-- Lumière naturelle
-- Romantique
-- Belles images

@@ -1,7 +1,7 @@
 ---
 title: "Photos de mariage : tout savoir sur la séance d’engagement"
 metaTitle: "Pourquoi se laisser tenter par une séance d’engagement ?"
-description: "La séance d’engagement est un moment d’intimité organisé par votre photographe de mariage avant la cérémonie. Envie d’en savoir plus ? Suivez le guide ! //META"
+description: "La séance d’engagement est un moment d’intimité organisé par votre photographe de mariage avant la cérémonie. Envie d’en savoir plus ? Suivez le guide !"
 date: 2021-10-06
 oldPath: "/2021/10/06/pourquoi-seance-dengagement/"
 photos:
@@ -52,7 +52,7 @@ Il serait aussi dommage de l’interrompre précipitamment, alors même que vous
 
 ### Prévoir la bonne tenue
 
-On s’habille comment pour une séance d’engagement ? La priorité pour vous est de vous sentir bien dans vos vêtements. Sélectionnez une **tenue confortable**, qui vous permette de **bouger avec fluidité** et spontanéité**.** Et oubliez la petite jupe si moulante que vous avez besoin de la réajuster entre chaque prise, comme les vêtements trop serrés. C’est tout aussi vrai pour les chaussures ! Les jolis souliers qui sortent tout juste de leur boîte, ce sont des ampoules assurées à la fin de la journée.
+On s’habille comment pour une séance d’engagement ? La priorité pour vous est de vous sentir bien dans vos vêtements. Sélectionnez une **tenue confortable**, qui vous permette de **bouger avec fluidité** et spontanéité. Et oubliez la petite jupe si moulante que vous avez besoin de la réajuster entre chaque prise, comme les vêtements trop serrés. C’est tout aussi vrai pour les chaussures ! Les jolis souliers qui sortent tout juste de leur boîte, ce sont des ampoules assurées à la fin de la journée.
 
 Dans un second temps, essayez autant que possible de **coordonner vos tenues.** Si l’un porte une chemise blanche, l’autre peut s’habiller d’une jupe du même coloris. Pas besoin d’imprimés ou de vêtements griffés, une **tenue sobre** fera parfaitement l’affaire. Il est conseillé également de remiser au placard les couleurs trop tape-à-l’œil, en faveur de **teintes neutres.** Et si vous n’arrivez toujours pas à vous décider, rien ne vous oblige à choisir une seule tenue. Emporter un ou deux **changes** est le meilleur moyen d’apporter un brin de fraîcheur à votre séance photo !
 
@@ -77,10 +77,3 @@ Certains photographes incluent également ce shooting dans leur tarif global de 
 De mon côté, j’ai fait le choix de vous **offrir la séance d’engagement.** À mes yeux, ce moment à deux est essentiel pour préparer votre journée de mariage dans les meilleures conditions. J’apprends à mieux vous connaître, et vous y gagnez de belles photos personnalisées dans un cadre inoubliable. Ainsi, j’envoie en moyenne une quarantaine de photos aux futurs mariés, retouches y compris.
 
 Pour en savoir plus sur mes prestations de photographe de mariage à Lyon et sa région, n’hésitez pas à me contacter !
-
-Champ sémantique :
-
-- Main dans la main
-- Romantique
-- Trouver un photographe
-- Discrétion

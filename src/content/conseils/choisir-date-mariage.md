@@ -62,18 +62,3 @@ Des **vacances scolaires** et **week-end prolongés** viennent aussi émailler c
 En tant que salarié, vous bénéficiez légalement de **4 jours ouvrables de congés.** Il s’agit là d’une durée minimale, qui peut éventuellement augmenter selon les dispositions de votre convention collective. Ce congé, votre employeur est **obligé de vous l’accorder**. Toutefois, il reste d’usage de l’informer bien à l’avance afin de simplifier la démarche.
 
 Vous êtes face à un choix cornélien au moment de planifier le moment idéal pour votre union ? Prenez le temps de réfléchir à ce qui importe avant tout à vos yeux. S’agit-il de votre budget, du climat, ou encore de la valeur symbolique du jour choisi ? Chacun de ces éléments peut pencher dans la balance au moment de choisir la date de votre mariage. Alors concertez-vous entre futurs époux avant le mariage et réfléchissez sereinement sans décision hâtive. Une fois la période arrêtée, il sera temps de vous renseigner auprès des différentes prestataires afin que le jour J soit à votre image à 100 %.
-
-Mots : 1277
-
-Champ sémantique :
-
-- Marié / mariés
-- Mariage civil
-- Réception de mariage
-- Salle de mariage
-- Liste des invités
-- Préparatifs de votre mariage
-- Témoin de mariage
-- Mariage prévu
-- Alliances
-- Robe de mariée

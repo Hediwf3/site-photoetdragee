@@ -27,8 +27,6 @@ Dans un premier temps, internet est la pépinière idéale pour puiser l’inspi
 
 Épluchez parallèlement des **réseaux sociaux** comme Instagram ou [Pinterest](https://www.pinterest.fr/search/pins/?q=robes%20de%20mari%C3%A9e&rs=typed&term_meta%5b%5d=robes%7Ctyped&term_meta%5b%5d=de%7Ctyped&term_meta%5b%5d=mari%C3%A9e%7Ctyped). Sur cette dernière plateforme, il vous est même possible d’épingler tout ce qui vous plaît. Faites donc votre sélection, et laissez passer quelques jours avant d’y revenir. Ce faisant, vous serez à même de **trier** ce qui vous a attirée **à tête reposée.**
 
-Arne Hendriks - Flickr
-
 ### Adapter le modèle à votre morphologie
 
 Le repérage accompli, vous avez désormais une idée plus juste de vos attentes. Il est alors temps de confronter vos envies à votre morphologie. Si ravissante soit-elle, la robe de vos rêves peut en effet ne pas convenir à votre silhouette.
@@ -112,4 +110,4 @@ Des premières recherches aux essayages, il est important de consacrer du temps 
 
 Mon rôle en tant que photographe de mariage est précisément d’immortaliser ces moments d’émotions. Je vous accompagne également [au cours des préparatifs](/projets/), tandis que vos proches vous aident à peaufiner les derniers détails de votre plus belle tenue.
 
-Call to action : Alors si les photos qui illustrent cet article vous ont touchée, n’hésitez pas à me contacter à l’approche de votre mariage en Rhône-Alpes.
+Alors si les photos qui illustrent cet article vous ont touchée, n’hésitez pas à me contacter à l’approche de votre mariage en Rhône-Alpes.

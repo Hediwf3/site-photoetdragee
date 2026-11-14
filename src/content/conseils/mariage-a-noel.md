@@ -55,5 +55,3 @@ Si les flocons manquent à l’appel, les illuminations peuvent prendre le relai
 Alors, on se marie à Noël ? Si l’ambiance féerique des fêtes de fin d’année vous enchante, il n’y a qu’un pas du rêve à la réalité. En hiver, les prix attractifs séduisent de plus en plus de futurs mariés. Un mariage à Noël est aussi le moment parfait pour rassembler tout votre entourage et vous offrir une cérémonie haute en couleur.
 
 Vous êtes convaincu ? Faites appel à mes services de photographe de mariage à Lyon pour immortaliser votre union.
-
-Mots : 1005

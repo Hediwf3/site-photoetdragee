@@ -204,5 +204,3 @@ Pour que la fête s’étire le plus tard possible, il est bon de prévoir quelq
 Envie de vous amuser jusqu’à l’aube ? Les 100 titres de cette [playlist de mariage](https://deezer.page.link/13tMPkxJAfWn16zf6) sont sûrs d’enflammer la piste. Bien sûr, votre DJ saura vous surprendre avec d’autres morceaux inattendus. Il pourra aussi adapter sa playlist en fonction des demandes de vos invités, mais aussi des vôtres !
 
 La soirée de votre mariage, ce sont de beaux moments d’émotions en perspective, comme de grands éclats de rire. C’est aussi l’un des moments que j’aime le plus photographier ! Loin des photos posées, j’en profite pour capturer des clichés naturels, souvent touchants, parfois très drôles. Alors pour vos photos de mariage à Lyon et sa région, n’hésitez pas à me contacter !
-
-Mots : 1317

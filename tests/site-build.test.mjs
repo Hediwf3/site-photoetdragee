@@ -203,3 +203,19 @@ test('advice articles are complete pages, reachable from the footer but not from
   assert.ok(!home.split('<footer')[0].includes('href="/conseils/"'));
   assert.ok(readFileSync('dist/sitemap-0.xml', 'utf8').includes('/conseils/seance-engagement-vienne/'));
 });
+
+// [OPTIM] Garde-fou « notes de rédaction ». Les textes Word d'origine se
+// terminaient par des notes de travail (« Mots : 1277 », « Champ sémantique : »
+// suivi d'une liste de mots-clés, « Call to action : », crédits de photos de
+// banque d'images). Elles ont été retirées ; ce test empêche qu'elles
+// reviennent, et vérifie qu'aucun signe de mise en forme brut (** ou ]( )
+// n'apparaît tel quel dans un article.
+test('advice articles carry no writer notes or raw formatting marks', () => {
+  for (const name of readdirSync('src/content/conseils')) {
+    const html = page(`conseils/${name.replace('.md', '')}`);
+    const text = html.slice(html.indexOf('<article'), html.indexOf('</article>')).replace(/<[^>]+>/g, ' ');
+    for (const mark of ['Mots :', 'Champ sémantique', 'Call to action', 'Call-ot-action', 'Unsplash', 'Flickr', 'META', '**', '](', '//']) {
+      assert.ok(!text.includes(mark), `${name} contient « ${mark} »`);
+    }
+  }
+});

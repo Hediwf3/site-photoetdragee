@@ -93,5 +93,3 @@ Ce petit **havre de quiétude** sur les hauteurs de la colline de Fourvière off
 Envie d’un moment privilégié face à l’objectif ? La métropole lyonnaise est un décor magique pour vos photos en couple. Vestiges historiques, quartiers modernistes ou ruelles traditionnelles, votre shooting peut prendre de nombreux visages.
 
 Vous êtes à la recherche d’un photographe pour votre mariage à Lyon ? J’ai le plaisir de vous offrir une **séance d’engagement gratuite** dans le lieu de votre choix. Vieux Lyon, Croix-Rousse ou Fourvière, faites-moi part de vos envies et je saurai vous suggérer le spot qui saura vous mettre en valeur.
-
-Mots : 1475
