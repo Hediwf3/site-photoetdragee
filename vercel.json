@@ -30,6 +30,51 @@
       "source": "/portfolio-item/:slug/",
       "destination": "/projets/",
       "permanent": true
+    },
+    {
+      "source": "/conseils-mariage/",
+      "destination": "/conseils/",
+      "permanent": true
+    },
+    {
+      "source": "/category/nosconseils/",
+      "destination": "/conseils/",
+      "permanent": true
+    },
+    {
+      "source": "/2021/10/08/comment-choisir-date-mariage/",
+      "destination": "/conseils/choisir-date-mariage/",
+      "permanent": true
+    },
+    {
+      "source": "/2021/10/06/pourquoi-seance-dengagement/",
+      "destination": "/conseils/pourquoi-seance-dengagement/",
+      "permanent": true
+    },
+    {
+      "source": "/2021/10/05/quand-reserver-photographe/",
+      "destination": "/conseils/quand-reserver-photographe/",
+      "permanent": true
+    },
+    {
+      "source": "/2021/10/06/reussir-photos-groupe-mariage/",
+      "destination": "/conseils/reussir-photos-groupe-mariage/",
+      "permanent": true
+    },
+    {
+      "source": "/2022/02/25/seance-engagement-vienne/",
+      "destination": "/conseils/seance-engagement-vienne/",
+      "permanent": true
+    },
+    {
+      "source": "/2021/10/12/seance-first-look-mariage/",
+      "destination": "/conseils/seance-first-look-mariage/",
+      "permanent": true
+    },
+    {
+      "source": "/2021/10/08/seance-photo-en-couple-a-lyon-10-idees/",
+      "destination": "/conseils/seance-photo-en-couple-a-lyon-10-idees/",
+      "permanent": true
     }
   ],
   "headers": [

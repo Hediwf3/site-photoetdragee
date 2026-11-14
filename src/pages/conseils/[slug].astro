@@ -1,0 +1,181 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { imgAttrs } from '../../utils/images';
+import { siteConfig } from '../../data/siteConfig';
+
+// [OPTIM] PAGE D'UN ARTICLE « CONSEILS ».
+// Une page est créée pour chaque fichier de src/content/conseils/ (voir
+// src/content.config.ts). Ces articles existaient sur l'ancien site WordPress ;
+// ils reprennent la mise en page de la page « Photographe de mariage à Vienne »
+// (mêmes polices, mêmes filets, même colonne de texte). Ils ne sont pas dans le
+// menu : on y arrive depuis Google, depuis le pied de page ou depuis /conseils/.
+// Chaque article renvoie vers la page Vienne et vers le formulaire de contact.
+export async function getStaticPaths() {
+  const entries = await getCollection('conseils');
+  return entries.map(entry => ({ params: { slug: entry.id }, props: { entry, entries } }));
+}
+
+const { entry, entries } = Astro.props;
+const { title, metaTitle, description, date, photos } = entry.data;
+const { price, facts } = siteConfig;
+
+const siteUrl = (Astro.site || Astro.url.origin).toString();
+const pageUrl = new URL(`/conseils/${entry.id}/`, siteUrl).toString();
+
+// The article body, cut at each heading so photos can sit between two parts.
+const { Content } = await render(entry);
+const html = entry.rendered?.html ?? '';
+const chunks = html.split(/(?=<h[23][ >])/);
+const headingOf = (chunk: string) => (chunk.match(/^<h([23])[^>]*>([\s\S]*?)<\/h\1>/) || [])[2]?.replace(/<[^>]+>/g, '') ?? '';
+const normalize = (text: string) => text.toLowerCase().replace(/[’']/g, "'").replace(/&#39;|&#x27;/g, "'").trim();
+
+const [hero, ...inline] = photos;
+// Where each inline photo goes: index of the chunk it follows.
+const placed = new Map<number, typeof inline>();
+const put = (index: number, photo: (typeof inline)[number]) => placed.set(index, [...(placed.get(index) ?? []), photo]);
+const free: typeof inline = [];
+for (const photo of inline) {
+  const index = photo.after ? chunks.findIndex(chunk => normalize(headingOf(chunk)).startsWith(normalize(photo.after!))) : -1;
+  if (index >= 0) put(index, photo); else free.push(photo);
+}
+// Photos without a set place are spread evenly, each at the end of a main part (h2).
+const partEnds = chunks.map((_, i) => i).filter(i => i > 0 && (i === chunks.length - 1 || /^<h2/.test(chunks[i + 1])) && !placed.has(i));
+free.forEach((photo, k) => {
+  const index = partEnds.length ? partEnds[Math.min(partEnds.length - 1, Math.floor((k + 0.5) * partEnds.length / free.length))] : chunks.length - 1;
+  put(index, photo);
+});
+
+const isPortrait = (src: string) => { const a = imgAttrs(src); return (a.height ?? 0) > (a.width ?? 1); };
+// Three other articles: the next ones in alphabetical order, looping at the end.
+const sorted = [...entries].sort((a, b) => a.id.localeCompare(b.id));
+const at = sorted.findIndex(other => other.id === entry.id);
+const related = [1, 2, 3].map(step => sorted[(at + step) % sorted.length]);
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": `${pageUrl}#article`,
+      "mainEntityOfPage": pageUrl,
+      "headline": title,
+      "description": description,
+      "inLanguage": "fr-FR",
+      ...(hero ? { "image": photos.map(photo => new URL(encodeURI(photo.src), siteUrl).toString()) } : {}),
+      ...(date ? { "datePublished": date.toISOString().slice(0, 10) } : {}),
+      "author": { "@id": `${siteUrl}#business` },
+      "publisher": { "@id": `${siteUrl}#business` }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Accueil", "item": siteUrl },
+        { "@type": "ListItem", "position": 2, "name": "Conseils mariage", "item": new URL('/conseils/', siteUrl).toString() },
+        { "@type": "ListItem", "position": 3, "name": title, "item": pageUrl }
+      ]
+    }
+  ]
+};
+---
+
+<Layout title={metaTitle ?? title} description={description} image={hero?.src} hideLoadingOverlay={true}>
+
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <article class="w-full bg-surface text-accent">
+
+    {/* Intro : même en-tête que la page Vienne (titre à gauche, photo à droite) */}
+    <header class={`px-6 md:px-12 pt-32 md:pt-44 max-w-7xl mx-auto grid gap-10 md:gap-16 items-end ${hero ? 'md:grid-cols-2' : ''}`}>
+      <div>
+        <p class="font-sans text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-80 mb-6">
+          <a href="/conseils/" class="hover:opacity-70 transition-opacity">Conseils mariage</a>
+        </p>
+        <h1 class="font-serif font-light text-[9.5vw] md:text-[4vw] leading-[1.05] tracking-[-0.02em] text-balance">{title}</h1>
+        <p class="font-serif font-light text-xl md:text-2xl leading-snug text-balance mt-8 opacity-90">{description}</p>
+      </div>
+      {hero && (
+        <figure class="m-0">
+          <img
+            {...imgAttrs(hero.src, isPortrait(hero.src) ? "(min-width: 768px) 45vw, 100vw" : "(min-width: 768px) 85vw, 190vw")}
+            alt={hero.alt}
+            class="w-full aspect-[4/5] object-cover"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </figure>
+      )}
+    </header>
+
+    <div class="article-body px-6 md:px-12 max-w-3xl mx-auto mt-20 md:mt-28 font-serif font-light text-lg md:text-xl leading-relaxed">
+      {html ? chunks.map((chunk, i) => (
+        <>
+          <Fragment set:html={chunk} />
+          {(placed.get(i) ?? []).map(photo => (
+            <figure class={`article-photo ${isPortrait(photo.src) ? 'is-portrait' : ''}`}>
+              <img
+                {...imgAttrs(photo.src, isPortrait(photo.src) ? "(min-width: 768px) 420px, 80vw" : "(min-width: 768px) 768px, 100vw")}
+                alt={photo.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </>
+      )) : <Content />}
+    </div>
+
+    {/* Rappel de l'offre + liens vers les pages principales */}
+    <div class="px-6 md:px-12 max-w-3xl mx-auto mt-24 md:mt-32 font-serif font-light text-lg md:text-xl leading-relaxed">
+      <section class="border-t border-accent/20 pt-10">
+        <h2 class="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-widest opacity-80 mb-6">Photo &amp; Dragée, photographe de mariage à Vienne</h2>
+        <p>
+          Je m'appelle Hedi. Depuis {facts.since}, je photographie {facts.weddingsPerYear} de mariages par an autour de Vienne, de Lyon et en Isère :
+          une formule unique à {price.text}, {facts.coverage}, avec une séance engagement offerte.
+          Découvrez ma démarche sur la page <a href="/photographe-mariage-vienne/">photographe de mariage à Vienne</a> ou parcourez mes <a href="/projets/">reportages</a>.
+        </p>
+      </section>
+
+      <section class="mt-16">
+        <h2 class="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-widest opacity-80 mb-6">À lire aussi</h2>
+        <ul class="list-none p-0 m-0 border-t border-accent/20">
+          {related.map(other => (
+            <li class="border-b border-accent/20">
+              <a href={`/conseils/${other.id}/`} class="block py-4 hover:opacity-70 transition-opacity">{other.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+
+    <section class="px-6 md:px-12 mt-28 md:mt-40 pt-24 md:pt-32 pb-8 border-t border-accent/10 text-center">
+      <h2 class="font-serif font-light text-[11vw] md:text-[5vw] leading-[1.05] text-balance">Votre date est-elle libre ?</h2>
+      <p class="font-serif font-light text-lg md:text-xl opacity-85 mt-6 text-balance">
+        Écrivez-moi, je vous réponds personnellement. Vous pouvez aussi m'appeler au <a href="tel:+33652253578" class="border-b border-accent/40">06 52 25 35 78</a>.
+      </p>
+      <a href="/contact/" class="inline-block mt-10 font-sans text-xs uppercase tracking-[0.2em] border-b border-accent/60 pb-1 hover:opacity-70 transition-opacity">Vérifier ma date</a>
+    </section>
+
+  </article>
+
+</Layout>
+
+<style is:global>
+  /* [OPTIM] Mise en forme du texte des articles (écrit en Markdown, donc sans classes). */
+  .article-body p { margin: 0 0 1.25rem; }
+  .article-body h2 { font-weight: 300; font-size: 1.9rem; line-height: 1.15; margin: 4rem 0 1.5rem; text-wrap: balance; }
+  .article-body h3 { font-family: var(--font-sans); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; margin: 2.75rem 0 1rem; }
+  .article-body strong { font-weight: 400; }
+  .article-body a, .article-body ~ div p a { border-bottom: 1px solid color-mix(in srgb, currentColor 40%, transparent); }
+  .article-body a:hover { opacity: 0.7; }
+  .article-body ul { list-style: none; padding: 0; margin: 0 0 1.25rem; }
+  .article-body li { padding-left: 1.5rem; text-indent: -1.5rem; margin-bottom: 0.35rem; }
+  .article-body li::before { content: "— "; }
+  .article-body .article-photo { margin: 3.5rem 0; }
+  .article-body .article-photo img { width: 100%; height: auto; display: block; }
+  .article-body .article-photo.is-portrait { max-width: 420px; margin-left: auto; margin-right: auto; }
+  @media (min-width: 768px) {
+    .article-body h2 { font-size: 2.4rem; }
+  }
+</style>

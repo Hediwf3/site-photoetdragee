@@ -63,7 +63,10 @@ const currentYear = new Date().getFullYear();
         {project.venue.name}
       </a>
     ))}
-    <a href="/photographe-mariage-vienne/" class="opacity-75 hover:opacity-100 hover:italic transition-all duration-300 md:ml-auto">Photographe mariage Vienne (38200), Isère</a>
+    {/* [OPTIM] Lien discret vers les articles « Conseils » : ils ne sont pas dans le menu,
+        mais Google a besoin d'un lien sur chaque page pour les trouver. */}
+    <a href="/conseils/" class="opacity-75 hover:opacity-100 hover:italic transition-all duration-300 md:ml-auto">Conseils mariage</a>
+    <a href="/photographe-mariage-vienne/" class="opacity-75 hover:opacity-100 hover:italic transition-all duration-300">Photographe mariage Vienne (38200), Isère</a>
   </nav>
 
 </footer>

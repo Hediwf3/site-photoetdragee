@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const page = path => readFileSync(join('dist', path, 'index.html'), 'utf8');
@@ -173,4 +173,33 @@ test('old WordPress addresses redirect permanently to pages that exist', () => {
     assert.equal(permanent, true, source);
     assert.ok(existsSync(join('dist', destination, 'index.html')), `${source} → ${destination}`);
   }
+});
+
+// [OPTIM] Garde-fou « articles Conseils ». Les articles de l'ancien blog sont
+// republiés sous /conseils/. Ce test vérifie que chaque article a bien une page
+// complète (un seul grand titre, une adresse canonique, ses données pour Google,
+// un lien vers la page Vienne et vers le contact), que ses photos sont servies
+// en plusieurs tailles, et qu'on peut atteindre les articles depuis l'accueil
+// par le pied de page — sans qu'ils apparaissent dans le menu.
+test('advice articles are complete pages, reachable from the footer but not from the menu', () => {
+  const slugs = readdirSync('src/content/conseils').map(name => name.replace('.md', ''));
+  assert.ok(slugs.length >= 10);
+  const index = page('conseils');
+  for (const slug of slugs) {
+    const html = page(`conseils/${slug}`);
+    assert.equal((html.match(/<h1/g) || []).length, 1, slug);
+    assert.ok(html.includes(`rel="canonical" href="https://www.photoetdragee.fr/conseils/${slug}/"`), slug);
+    assert.ok(html.includes('"@type":"BlogPosting"'), slug);
+    assert.ok(html.includes('href="/photographe-mariage-vienne/"') && html.includes('href="/contact/"'), slug);
+    assert.ok(index.includes(`href="/conseils/${slug}/"`), slug);
+    const photos = [...html.matchAll(/<img[^>]*>/g)].map(m => m[0]).filter(img => img.includes('/portfolio-webp/'));
+    assert.ok(photos.length >= 3, `${slug} : ${photos.length} photo(s)`);
+    for (const img of photos) {
+      assert.ok(img.includes('srcset=') && img.includes('width=') && /alt="[^"]{25,}"/.test(img), `${slug} ${img.slice(0, 120)}`);
+    }
+  }
+  const home = page('');
+  assert.ok(home.includes('href="/conseils/"'));
+  assert.ok(!home.split('<footer')[0].includes('href="/conseils/"'));
+  assert.ok(readFileSync('dist/sitemap-0.xml', 'utf8').includes('/conseils/seance-engagement-vienne/'));
 });
