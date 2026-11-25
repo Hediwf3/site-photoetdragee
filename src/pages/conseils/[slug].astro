@@ -23,9 +23,23 @@ const { price, facts } = siteConfig;
 const siteUrl = (Astro.site || Astro.url.origin).toString();
 const pageUrl = new URL(`/conseils/${entry.id}/`, siteUrl).toString();
 
+// [OPTIM] CHIFFRES DE LA PRESTATION DANS LES ARTICLES.
+// Un article peut écrire {{prix}}, {{photos}}, {{delai}}, {{depuis}} ou
+// {{couverture}} au lieu du chiffre : il est remplacé ici par la valeur de
+// siteConfig (source unique, comme sur les autres pages). Ainsi, changer le
+// tarif dans siteConfig.ts met aussi les articles à jour.
+const tokens: Record<string, string> = {
+  prix: price.text,
+  photos: facts.photos,
+  delai: facts.delivery,
+  depuis: String(facts.since),
+  couverture: facts.coverage,
+};
+const fillTokens = (text: string) => text.replace(/\{\{(\w+)\}\}/g, (match, key) => tokens[key] ?? match);
+
 // The article body, cut at each heading so photos can sit between two parts.
 const { Content } = await render(entry);
-const html = entry.rendered?.html ?? '';
+const html = fillTokens(entry.rendered?.html ?? '');
 const chunks = html.split(/(?=<h[23][ >])/);
 const headingOf = (chunk: string) => (chunk.match(/^<h([23])[^>]*>([\s\S]*?)<\/h\1>/) || [])[2]?.replace(/<[^>]+>/g, '') ?? '';
 const normalize = (text: string) => text.toLowerCase().replace(/[’']/g, "'").replace(/&#39;|&#x27;/g, "'").trim();
